@@ -1,0 +1,39 @@
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.a
+*.o
+.env
+
+# Dependency directories
+vendor/
+
+# IDE and Editor specific files
+*.idea/
+*.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Log files
+*.log
+
+# Coverage reports
+coverage.out
+
+# Build directory
+build/
+bin/
+dist/
+tmp/

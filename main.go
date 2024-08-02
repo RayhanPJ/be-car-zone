@@ -1,6 +1,15 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"log"
+
+	"be-car-zone/app/config"
+	"be-car-zone/app/pkg/utils"
+	"be-car-zone/app/routes"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+)
 
 // @title API CarZone E-Commerce
 // @version 1.0
@@ -21,11 +30,22 @@ import "github.com/gin-gonic/gin"
 // @in header
 // @name Authorization
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+	var app *gin.Engine
+
+	app = gin.New()
+
+	environment := utils.Getenv("ENVIRONMENT", "development")
+
+	if environment == "development" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	}
+
+	db := config.ConnectDataBase()
+
+	routes.SetupRouter(db, app)
+
+	app.Run() // listen and serve on http://localhost:8080
 }
