@@ -1,0 +1,7 @@
+DB_USERNAME = yourDBUsername
+DB_PASSWORD = yourDBPassword
+DB_DATABASE = yourDBName
+DB_HOST = localhost
+DB_PORT = 3306
+API_SECRET=yourAPISecret
+TOKEN_HOUR_LIFESPAN=1
