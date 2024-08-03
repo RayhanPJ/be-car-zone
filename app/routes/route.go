@@ -32,6 +32,37 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 		c.Set("db", db)
 	})
 
+	// Init controllers
+	carController := &controllers.CarController{DB: db}
+	brandCarController := &controllers.BrandCarController{DB: db}
+	typeCarController := &controllers.TypeCarController{DB: db}
+
+	// Car
+	r.POST("/cars", carController.Create)
+	r.GET("/cars", carController.GetAll)
+	r.GET("/cars/:id", carController.GetByID)
+	r.PUT("/cars/:id", carController.Update)
+	r.DELETE("/cars/:id", carController.Delete)
+
+	// BrandCar
+	r.POST("/brand-cars", brandCarController.Create)
+	r.GET("/brand-cars", brandCarController.GetAll)
+	r.GET("/brand-cars/:id", brandCarController.GetByID)
+	r.PUT("/brand-cars/:id", brandCarController.Update)
+	r.DELETE("/brand-cars/:id", brandCarController.Delete)
+
+	// TypeCar
+	r.POST("/type-cars", typeCarController.Create)
+	r.GET("/type-cars", typeCarController.GetAll)
+	r.GET("/type-cars/:id", typeCarController.GetByID)
+	r.PUT("/type-cars/:id", typeCarController.Update)
+	r.DELETE("/type-cars/:id", typeCarController.Delete)
+
+	// set db to gin context
+	r.Use(func(c *gin.Context) {
+		c.Set("db", db)
+	})
+
 	authController := &controllers.AuthController{DB: db}
 
 	// Authentication User
