@@ -12,3 +12,8 @@ type Role struct {
 type RoleRequest struct {
 	RoleName string `json:"role_name"`
 }
+
+type RoleList struct {
+	ID       uint   `json:"id"`
+	RoleName string `json:"role_name"`
+}
