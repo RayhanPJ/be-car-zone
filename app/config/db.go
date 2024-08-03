@@ -57,6 +57,9 @@ func ConnectDataBase() *gorm.DB {
 	db.AutoMigrate(
 		&models.User{},
 		&models.Role{},
+		&models.Invoice{},
+		&models.Order{},
+		&models.Transaction{},
 	)
 
 	return db

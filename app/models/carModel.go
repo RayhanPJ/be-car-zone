@@ -10,6 +10,6 @@ type Car struct {
 	TypeID      uint      `json:"type_id"`
 	IsSecond    bool      `json:"is_second"`
 	Type        TypeCar   `json:"type" gorm:"foreignKey:TypeID"`
-	CreatedAt   time.Time `json:"-"`
-	UpdatedAt   time.Time `json:"-"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
