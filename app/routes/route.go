@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"be-car-zone/app/controllers"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -29,4 +31,12 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
 	})
+
+	authController := &controllers.AuthController{DB: db}
+
+	// Authentication User
+	authRoute := r.Group("/api/auth")
+	authRoute.POST("/login", authController.Login)
+	authRoute.POST("/register", authController.Register)
+
 }
