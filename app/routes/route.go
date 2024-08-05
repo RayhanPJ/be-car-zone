@@ -5,6 +5,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -58,8 +60,6 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	r.PUT("/type-cars/:id", typeCarController.Update)
 	r.DELETE("/type-cars/:id", typeCarController.Delete)
 
-	// set db to gin context
-	r.Use(func(c *gin.Context) {
-		c.Set("db", db)
-	})
+	// Swagger route
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
