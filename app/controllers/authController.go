@@ -21,7 +21,7 @@ type AuthController struct {
 // @Param Body body LoginInput true "the body to login a user"
 // @Produce json
 // @Success 200 {object} map[string]interface{}
-// @Router /login [post]
+// @Router /api/auth/login [post]
 func (ctrl *AuthController) Login(c *gin.Context) {
 	var req models.LoginRequest
 
@@ -36,14 +36,14 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	var user models.User
+	var user *models.User
 	if err := ctrl.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid username or password"})
 		return
 	}
 
-	if err := utils.CheckPasswordHash(user.Password, req.Password); !err {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid username or password"})
+	if user == nil || !utils.CheckPasswordHash(req.Password, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
 
@@ -63,10 +63,9 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 // @Param Body body RegisterInput true "the body to register a user"
 // @Produce json
 // @Success 200 {object} map[string]interface{}
-// @Router /register [post]
+// @Router /api/auth/register [post]
 func (ctrl *AuthController) Register(c *gin.Context) {
 	var req models.RegisterRequest
-	var user models.User
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -85,11 +84,14 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
+	var existingUser models.User
+	if err := ctrl.DB.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
+		// If no error, it means email already exists
+		c.JSON(http.StatusConflict, gin.H{"error": "email already exists"})
+		return
+	} else if err != gorm.ErrRecordNotFound {
+		// If other error, return internal server error
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -97,7 +99,7 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 		Username: req.Username,
 		Email:    req.Email,
 		Password: string(hashedPassword),
-		RoleID:   req.RoleID,
+		RoleID:   utils.IDRoleUser,
 	}
 
 	if err := ctrl.DB.Create(&newUser).Error; err != nil {
@@ -116,14 +118,14 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Security BearerToken
 // @Success 200 {object} models.User
-// @Router /auth/me [get]
+// @Router /api/auth/me [get]
 func (ctrl *AuthController) GetCurrentUser(c *gin.Context) {
 
 	var userId, _ = jwt.ExtractTokenID(c)
 
 	var user models.User
 
-	if err := ctrl.DB.Where("id = ?", userId).First(&user).Error; err != nil {
+	if err := ctrl.DB.Where("id = ?", userId).Preload("Role").First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Record not found!"})
 		return
 	}

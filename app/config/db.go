@@ -60,6 +60,9 @@ func ConnectDataBase() *gorm.DB {
 		&models.Invoice{},
 		&models.Order{},
 		&models.Transaction{},
+		&models.Car{},
+		&models.TypeCar{},
+		&models.BrandCar{},
 	)
 
 	return db
