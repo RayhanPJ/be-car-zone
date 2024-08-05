@@ -5,5 +5,3 @@
 # Visual Studio Code
 .vscode/
 .env
-
-tmp/

@@ -2,6 +2,8 @@ package routes
 
 import (
 	"be-car-zone/app/controllers"
+	"be-car-zone/app/middlewares"
+	"be-car-zone/app/pkg/utils"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -64,10 +66,30 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	})
 
 	authController := &controllers.AuthController{DB: db}
+	userController := &controllers.UserController{DB: db}
+	roleController := &controllers.RoleController{DB: db}
 
 	// Authentication User
 	authRoute := r.Group("/api/auth")
 	authRoute.POST("/login", authController.Login)
 	authRoute.POST("/register", authController.Register)
+	authRoute.GET("/me", authController.GetCurrentUser, middlewares.JwtAuthMiddleware(utils.RoleUser, utils.RoleAdmin))
+
+	// CMS Route
+	cmsRoute := r.Group("/api/cms/", middlewares.JwtAuthMiddleware(utils.RoleAdmin))
+
+	// CMS User
+	cmsRoute.GET("/users", userController.FindAll)
+	cmsRoute.GET("/users/:id", userController.FindByID)
+	cmsRoute.POST("/users", userController.Create)
+	cmsRoute.PUT("/users/:id", userController.Update)
+	cmsRoute.DELETE("/users/:id", userController.Delete)
+
+	// CMS Role
+	cmsRoute.GET("/roles", roleController.FindAll)
+	cmsRoute.GET("/roles/:id", roleController.FindByID)
+	cmsRoute.POST("/roles", roleController.Create)
+	cmsRoute.PUT("/roles/:id", roleController.Update)
+	cmsRoute.DELETE("/roles/:id", roleController.Delete)
 
 }
