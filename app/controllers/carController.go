@@ -14,8 +14,8 @@ type CarInput struct {
 	Name        string  `json:"name" binding:"required"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price" binding:"required"`
-	TypeID      int     `json:"type_id" binding:"required"`
-	BrandID     int     `json:"brand_id" binding:"required"`
+	TypeID      uint    `json:"type_id" binding:"required"`
+	BrandID     uint    `json:"brand_id" binding:"required"`
 	IsSecond    bool    `json:"is_second"`
 }
 

@@ -1,7 +1,7 @@
 package config
 
 import (
-	// "be-car-zone/app/models"
+	"be-car-zone/app/models"
 	"be-car-zone/app/pkg/utils"
 	"fmt"
 	"log"
@@ -54,7 +54,16 @@ func ConnectDataBase() *gorm.DB {
 
 	}
 
-	// db.AutoMigrate(&models.User{}, &models.Movie{}, &models.AgeRatingCategory{}, &models.Footballer{})
+	db.AutoMigrate(
+		&models.User{},
+		&models.Role{},
+		&models.Invoice{},
+		&models.Order{},
+		&models.Transaction{},
+		&models.Car{},
+		&models.TypeCar{},
+		&models.BrandCar{},
+	)
 
 	return db
 
