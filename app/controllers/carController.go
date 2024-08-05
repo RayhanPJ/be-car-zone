@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"be-car-zone/app/models"
 	"net/http"
 	"strconv"
+
+	"be-car-zone/app/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -12,8 +13,9 @@ import (
 type CarInput struct {
 	Name        string  `json:"name" binding:"required"`
 	Description string  `json:"description"`
-	Price       float64 `json:"price"`
+	Price       float64 `json:"price" binding:"required"`
 	TypeID      int     `json:"type_id" binding:"required"`
+	BrandID     int     `json:"brand_id" binding:"required"`
 	IsSecond    bool    `json:"is_second"`
 }
 
@@ -44,6 +46,7 @@ func (cc *CarController) Create(c *gin.Context) {
 		Description: input.Description,
 		Price:       input.Price,
 		TypeID:      input.TypeID,
+		BrandID:     input.BrandID,
 		IsSecond:    input.IsSecond,
 	}
 
@@ -52,8 +55,8 @@ func (cc *CarController) Create(c *gin.Context) {
 		return
 	}
 
-	if err := cc.DB.Preload("Type").First(&car, car.ID).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load car type"})
+	if err := cc.DB.Preload("Type").Preload("Brand").First(&car, car.ID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load car details"})
 		return
 	}
 
@@ -62,7 +65,7 @@ func (cc *CarController) Create(c *gin.Context) {
 
 // GetAll godoc
 // @Summary Get all cars
-// @Description Get a list of all cars with their types
+// @Description Get a list of all cars with their types and brands
 // @Tags cars
 // @Produce json
 // @Success 200 {array} models.Car
@@ -70,7 +73,7 @@ func (cc *CarController) Create(c *gin.Context) {
 // @Router /cars [get]
 func (cc *CarController) GetAll(c *gin.Context) {
 	var cars []models.Car
-	if err := cc.DB.Preload("Type").Find(&cars).Error; err != nil {
+	if err := cc.DB.Preload("Type").Preload("Brand").Find(&cars).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve cars"})
 		return
 	}
@@ -80,7 +83,7 @@ func (cc *CarController) GetAll(c *gin.Context) {
 
 // GetByID godoc
 // @Summary Get a car by ID
-// @Description Get details of a specific car including its type
+// @Description Get details of a specific car including its type and brand
 // @Tags cars
 // @Produce json
 // @Param id path int true "Car ID"
@@ -89,14 +92,14 @@ func (cc *CarController) GetAll(c *gin.Context) {
 // @Failure 404 {object} map[string]string
 // @Router /cars/{id} [get]
 func (cc *CarController) GetByID(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
 	var car models.Car
-	if err := cc.DB.Preload("Type").First(&car, id).Error; err != nil {
+	if err := cc.DB.Preload("Type").Preload("Brand").First(&car, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Car not found"})
 		return
 	}
@@ -118,7 +121,7 @@ func (cc *CarController) GetByID(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /cars/{id} [put]
 func (cc *CarController) Update(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
@@ -140,6 +143,7 @@ func (cc *CarController) Update(c *gin.Context) {
 	car.Description = input.Description
 	car.Price = input.Price
 	car.TypeID = input.TypeID
+	car.BrandID = input.BrandID
 	car.IsSecond = input.IsSecond
 
 	if err := cc.DB.Save(&car).Error; err != nil {
@@ -147,8 +151,8 @@ func (cc *CarController) Update(c *gin.Context) {
 		return
 	}
 
-	if err := cc.DB.Preload("Type").First(&car, car.ID).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load car type"})
+	if err := cc.DB.Preload("Type").Preload("Brand").First(&car, car.ID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load car details"})
 		return
 	}
 
@@ -163,10 +167,11 @@ func (cc *CarController) Update(c *gin.Context) {
 // @Param id path int true "Car ID"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /cars/{id} [delete]
 func (cc *CarController) Delete(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
