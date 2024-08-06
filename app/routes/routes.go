@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	swaggerFiles "github.com/swaggo/files"     
-	ginSwagger "github.com/swaggo/gin-swagger" 
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter(db *gorm.DB, r *gin.Engine) {
@@ -59,6 +59,7 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	authRoute.POST("/login", authController.Login)
 	authRoute.POST("/register", authController.Register)
 	authRoute.GET("/me", authController.GetCurrentUser, middlewares.JwtAuthMiddleware(utils.RoleUser, utils.RoleAdmin))
+	authRoute.POST("/change-password", authController.ChangePassword, middlewares.JwtAuthMiddleware(utils.RoleUser, utils.RoleAdmin))
 
 	// CMS Route
 	cmsRoute := r.Group("/api/cms/", middlewares.JwtAuthMiddleware(utils.RoleAdmin))

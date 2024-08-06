@@ -85,12 +85,16 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 	}
 
 	var existingUser models.User
-	if err := ctrl.DB.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
-		// If no error, it means email already exists
-		c.JSON(http.StatusConflict, gin.H{"error": "email already exists"})
-		return
+	if err := ctrl.DB.Where("username = ? OR email = ?", req.Username, req.Email).First(&existingUser).Error; err == nil {
+		if existingUser.Username == req.Username {
+			c.JSON(http.StatusConflict, gin.H{"error": "username already exists"})
+			return
+		}
+		if existingUser.Email == req.Email {
+			c.JSON(http.StatusConflict, gin.H{"error": "email already exists"})
+			return
+		}
 	} else if err != gorm.ErrRecordNotFound {
-		// If other error, return internal server error
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -131,4 +135,60 @@ func (ctrl *AuthController) GetCurrentUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+// ChangePasswordUser godoc
+// @Summary Change Password User by token.
+// @Description Change Password User by token.
+// @Tags Auth
+// @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Param body body models.InputChangePassword true "Change Password Request Body"
+// @Security BearerToken
+// @Success 200 {object} gin.H{"message": "Password changed successfully"}
+// @Failure 400 {object} gin.H{"error": "string"}
+// @Failure 401 {object} gin.H{"error": "string"}
+// @Failure 500 {object} gin.H{"error": "string"}
+// @Router /api/auth/change-password [post]
+func (ctrl *AuthController) ChangePassword(c *gin.Context) {
+	var input models.InputChangePassword
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var userId, _ = jwt.ExtractTokenID(c)
+
+	// Cari user berdasarkan userID
+	var user models.User
+	if err := ctrl.DB.Where("id = ?", userId).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	// Verifikasi old password
+	if !utils.CheckPasswordHash(input.OldPassword, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Old password is incorrect"})
+		return
+	}
+
+	// Hash new password
+	hashedPassword, err := utils.HashPassword(input.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+
+	// Update password user
+	user.Password = hashedPassword
+	if err := ctrl.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
 }
