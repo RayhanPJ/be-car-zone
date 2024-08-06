@@ -33,6 +33,7 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 			ID:              transaction.ID,
 			OrderID:         transaction.OrderID,
 			PaymentProvider: transaction.PaymentProvider,
+			TransactionImage: transaction.TransactionImage,
 			NoRek:           transaction.NoRek,
 			Amount:          transaction.Amount,
 			TransactionDate: transaction.TransactionDate,

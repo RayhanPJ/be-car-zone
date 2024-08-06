@@ -41,6 +41,7 @@ func (ctrl *OrderController) FindAll(c *gin.Context) {
 				ID:          order.Car.ID,
 				Name:        order.Car.Name,
 				Description: order.Car.Description,
+				ImageCar:    order.Car.ImageCar,
 				Price:       order.Car.Price,
 				TypeID:      order.Car.TypeID,
 				BrandID:     order.Car.BrandID,
