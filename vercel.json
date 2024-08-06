@@ -5,7 +5,7 @@
     "rewrites": [
       {
         "source": "/(.*)",
-        "destination": "/app/api/vercel.go"
+        "destination": "/api/vercel.go"
       }
     ]
 }

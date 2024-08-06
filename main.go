@@ -1,7 +1,7 @@
 package main
 
 import (
-	"be-car-zone/app/api"
+	"be-car-zone/api"
 	// "be-car-zone/app/pkg/utils"
 	// "log"
 	"net/http"
