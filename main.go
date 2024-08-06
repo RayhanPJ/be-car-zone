@@ -11,7 +11,7 @@ func main() {
 	port := utils.Getenv("HOST", "localhost:8080")
 
 	// Menjalankan server HTTP
-	log.Printf("Server running on http://localhost%s", port)
+	log.Printf("Server running on %s", port)
 	err := api.App.Run(port)
 	if err != nil {
 		log.Fatal("Error starting server: ", err)

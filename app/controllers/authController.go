@@ -18,7 +18,7 @@ type AuthController struct {
 // @Summary Login as as user.
 // @Description Logging in to get jwt token to access admin or user api by roles.
 // @Tags Auth
-// @Param Body body LoginInput true "the body to login a user"
+// @Param Body body models.LoginRequest true "the body to login a user"
 // @Produce json
 // @Success 200 {object} map[string]interface{}
 // @Router /api/auth/login [post]
@@ -60,7 +60,7 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 // @Summary Register a user.
 // @Description registering a user from public access.
 // @Tags Auth
-// @Param Body body RegisterInput true "the body to register a user"
+// @Param Body body models.RegisterRequest true "the body to register a user"
 // @Produce json
 // @Success 200 {object} map[string]interface{}
 // @Router /api/auth/register [post]
