@@ -19,11 +19,13 @@ type BrandCarController struct {
 // @Tags brand-cars
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param brand_car body models.BrandCar true "Brand Car object"
 // @Success 201 {object} models.BrandCar
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /brand-cars [post]
+// @Router /api/cms/brand-cars [post]
 func (bcc *BrandCarController) Create(c *gin.Context) {
 	var brandCar models.BrandCar
 	if err := c.ShouldBindJSON(&brandCar); err != nil {
@@ -44,9 +46,11 @@ func (bcc *BrandCarController) Create(c *gin.Context) {
 // @Description Get a list of all brand cars
 // @Tags brand-cars
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Success 200 {array} models.BrandCar
 // @Failure 500 {object} map[string]string
-// @Router /brand-cars [get]
+// @Router /api/cms/brand-cars [get]
 func (bcc *BrandCarController) GetAll(c *gin.Context) {
 	var brandCars []models.BrandCar
 	if err := bcc.DB.Find(&brandCars).Error; err != nil {
@@ -62,11 +66,13 @@ func (bcc *BrandCarController) GetAll(c *gin.Context) {
 // @Description Get details of a specific brand car
 // @Tags brand-cars
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param id path int true "Brand Car ID"
 // @Success 200 {object} models.BrandCar
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
-// @Router /brand-cars/{id} [get]
+// @Router /api/cms/brand-cars/{id} [get]
 func (bcc *BrandCarController) GetByID(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -89,13 +95,15 @@ func (bcc *BrandCarController) GetByID(c *gin.Context) {
 // @Tags brand-cars
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param id path int true "Brand Car ID"
 // @Param brand_car body models.BrandCar true "Updated Brand Car object"
 // @Success 200 {object} models.BrandCar
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /brand-cars/{id} [put]
+// @Router /api/cms/brand-cars/{id} [put]
 func (bcc *BrandCarController) Update(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -127,11 +135,13 @@ func (bcc *BrandCarController) Update(c *gin.Context) {
 // @Description Delete a specific brand car
 // @Tags brand-cars
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param id path int true "Brand Car ID"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /brand-cars/{id} [delete]
+// @Router /api/cms/brand-cars/{id} [delete]
 func (bcc *BrandCarController) Delete(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {

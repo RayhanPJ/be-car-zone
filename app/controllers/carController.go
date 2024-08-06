@@ -29,11 +29,13 @@ type CarController struct {
 // @Tags cars
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param car body CarInput true "Car object"
 // @Success 201 {object} models.Car
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /cars [post]
+// @Router /api/cms/cars [post]
 func (cc *CarController) Create(c *gin.Context) {
 	var input CarInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -68,9 +70,11 @@ func (cc *CarController) Create(c *gin.Context) {
 // @Description Get a list of all cars with their types and brands
 // @Tags cars
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Success 200 {array} models.Car
 // @Failure 500 {object} map[string]string
-// @Router /cars [get]
+// @Router /api/cms/cars [get]
 func (cc *CarController) GetAll(c *gin.Context) {
 	var cars []models.Car
 	if err := cc.DB.Preload("Type").Preload("Brand").Find(&cars).Error; err != nil {
@@ -86,11 +90,13 @@ func (cc *CarController) GetAll(c *gin.Context) {
 // @Description Get details of a specific car including its type and brand
 // @Tags cars
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param id path int true "Car ID"
 // @Success 200 {object} models.Car
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
-// @Router /cars/{id} [get]
+// @Router /api/cms/cars/{id} [get]
 func (cc *CarController) GetByID(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -113,13 +119,15 @@ func (cc *CarController) GetByID(c *gin.Context) {
 // @Tags cars
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param id path int true "Car ID"
 // @Param car body CarInput true "Updated Car object"
 // @Success 200 {object} models.Car
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /cars/{id} [put]
+// @Router /api/cms/cars/{id} [put]
 func (cc *CarController) Update(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -164,12 +172,14 @@ func (cc *CarController) Update(c *gin.Context) {
 // @Description Delete a specific car
 // @Tags cars
 // @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
 // @Param id path int true "Car ID"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /cars/{id} [delete]
+// @Router /api/cms/cars/{id} [delete]
 func (cc *CarController) Delete(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

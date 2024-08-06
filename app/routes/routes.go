@@ -8,6 +8,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	swaggerFiles "github.com/swaggo/files"     
+	ginSwagger "github.com/swaggo/gin-swagger" 
 )
 
 func SetupRouter(db *gorm.DB, r *gin.Engine) {
@@ -28,6 +31,7 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 			"message": "Hello World",
 		})
 	})
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// set db to gin context
 	r.Use(func(c *gin.Context) {
@@ -39,27 +43,6 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	brandCarController := &controllers.BrandCarController{DB: db}
 	typeCarController := &controllers.TypeCarController{DB: db}
 	orderController := &controllers.OrderController{DB: db}
-
-	// Car
-	r.POST("/cars", carController.Create)
-	r.GET("/cars", carController.GetAll)
-	r.GET("/cars/:id", carController.GetByID)
-	r.PUT("/cars/:id", carController.Update)
-	r.DELETE("/cars/:id", carController.Delete)
-
-	// BrandCar
-	r.POST("/brand-cars", brandCarController.Create)
-	r.GET("/brand-cars", brandCarController.GetAll)
-	r.GET("/brand-cars/:id", brandCarController.GetByID)
-	r.PUT("/brand-cars/:id", brandCarController.Update)
-	r.DELETE("/brand-cars/:id", brandCarController.Delete)
-
-	// TypeCar
-	r.POST("/type-cars", typeCarController.Create)
-	r.GET("/type-cars", typeCarController.GetAll)
-	r.GET("/type-cars/:id", typeCarController.GetByID)
-	r.PUT("/type-cars/:id", typeCarController.Update)
-	r.DELETE("/type-cars/:id", typeCarController.Delete)
 
 	// set db to gin context
 	r.Use(func(c *gin.Context) {
@@ -95,17 +78,38 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	cmsRoute.DELETE("/roles/:id", roleController.Delete)
 
 	// CMS Order
-	cmsRoute.GET("/order", orderController.FindAll)
-	cmsRoute.GET("/order/:id", orderController.FindByID)
-	cmsRoute.POST("/order", orderController.Create)
-	cmsRoute.PUT("/order/:id", orderController.Update)
-	cmsRoute.DELETE("/order/:id", orderController.Delete)
+	cmsRoute.GET("/orders", orderController.FindAll)
+	cmsRoute.GET("/orders/:id", orderController.FindByID)
+	cmsRoute.POST("/orders", orderController.Create)
+	cmsRoute.PUT("/orders/:id", orderController.Update)
+	cmsRoute.DELETE("/orders/:id", orderController.Delete)
 
 	// CMS Transaction
-	cmsRoute.GET("/transaction", transactionController.FindAll)
-	cmsRoute.GET("/transaction/:id", transactionController.FindByID)
-	cmsRoute.POST("/transaction", transactionController.Create)
-	cmsRoute.PUT("/transaction/:id", transactionController.Update)
-	cmsRoute.DELETE("/transaction/:id", transactionController.Delete)
+	cmsRoute.GET("/transactions", transactionController.FindAll)
+	cmsRoute.GET("/transactions/:id", transactionController.FindByID)
+	cmsRoute.POST("/transactions", transactionController.Create)
+	cmsRoute.PUT("/transactions/:id", transactionController.Update)
+	cmsRoute.DELETE("/transactions/:id", transactionController.Delete)
+
+	// Car
+	cmsRoute.POST("/cars", carController.Create)
+	cmsRoute.GET("/cars", carController.GetAll)
+	cmsRoute.GET("/cars/:id", carController.GetByID)
+	cmsRoute.PUT("/cars/:id", carController.Update)
+	cmsRoute.DELETE("/cars/:id", carController.Delete)
+
+	// BrandCar
+	cmsRoute.POST("/brand-cars", brandCarController.Create)
+	cmsRoute.GET("/brand-cars", brandCarController.GetAll)
+	cmsRoute.GET("/brand-cars/:id", brandCarController.GetByID)
+	cmsRoute.PUT("/brand-cars/:id", brandCarController.Update)
+	cmsRoute.DELETE("/brand-cars/:id", brandCarController.Delete)
+
+	// TypeCar
+	cmsRoute.POST("/type-cars", typeCarController.Create)
+	cmsRoute.GET("/type-cars", typeCarController.GetAll)
+	cmsRoute.GET("/type-cars/:id", typeCarController.GetByID)
+	cmsRoute.PUT("/type-cars/:id", typeCarController.Update)
+	cmsRoute.DELETE("/type-cars/:id", typeCarController.Delete)
 
 }

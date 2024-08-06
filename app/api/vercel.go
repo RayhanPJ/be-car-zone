@@ -2,7 +2,7 @@ package api
 
 import (
 	"be-car-zone/app/config"
-	// "be-car-zone/app/docs"
+	"be-car-zone/docs"
 	"be-car-zone/app/routes"
 	"be-car-zone/app/pkg/utils"
 	"log"
@@ -33,15 +33,15 @@ func init() {
 	}
 
 	// Set Swagger info
-	// docs.SwaggerInfo.Title = "News API"
-	// docs.SwaggerInfo.Description = "This is a sample server News."
-	// docs.SwaggerInfo.Version = "1.0"
-	// docs.SwaggerInfo.Host = utils.Getenv("HOST", "localhost:8080")
-	// if environment == "development" {
-	// 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
-	// } else {
-	// 	docs.SwaggerInfo.Schemes = []string{"https"}
-	// }
+	docs.SwaggerInfo.Title = "News API"
+	docs.SwaggerInfo.Description = "This is a sample server News."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = utils.Getenv("HOST", "localhost:8080")
+	if environment == "development" {
+		docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	} else {
+		docs.SwaggerInfo.Schemes = []string{"https"}
+	}
 
 	// // Connect to the database
 	DB = config.ConnectDataBase()
