@@ -13,6 +13,7 @@ import (
 type CarInput struct {
 	Name        string  `json:"name" binding:"required"`
 	Description string  `json:"description"`
+	ImageCar    string  `json:"image_car"`
 	Price       float64 `json:"price" binding:"required"`
 	TypeID      uint    `json:"type_id" binding:"required"`
 	BrandID     uint    `json:"brand_id" binding:"required"`
@@ -46,6 +47,7 @@ func (cc *CarController) Create(c *gin.Context) {
 	car := models.Car{
 		Name:        input.Name,
 		Description: input.Description,
+		ImageCar:    input.ImageCar,
 		Price:       input.Price,
 		TypeID:      input.TypeID,
 		BrandID:     input.BrandID,
