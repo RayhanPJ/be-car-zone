@@ -9,6 +9,8 @@ require (
 	gorm.io/gorm v1.25.11
 )
 
+require github.com/google/go-cmp v0.6.0 // indirect
+
 require (
 	github.com/bytedance/sonic v1.12.0 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
