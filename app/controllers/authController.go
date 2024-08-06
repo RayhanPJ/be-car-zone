@@ -38,12 +38,12 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 
 	var user *models.User
 	if err := ctrl.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid username or password"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid username or password"})
 		return
 	}
 
 	if user == nil || !utils.CheckPasswordHash(req.Password, user.Password) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid username or password"})
 		return
 	}
 
