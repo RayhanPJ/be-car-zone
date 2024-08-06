@@ -13,6 +13,17 @@ type BrandCarController struct {
 	DB *gorm.DB
 }
 
+// Create godoc
+// @Summary Create a new brand car
+// @Description Create a new brand car
+// @Tags brand-cars
+// @Accept json
+// @Produce json
+// @Param brand_car body models.BrandCar true "Brand Car object"
+// @Success 201 {object} models.BrandCar
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /brand-cars [post]
 func (bcc *BrandCarController) Create(c *gin.Context) {
 	var brandCar models.BrandCar
 	if err := c.ShouldBindJSON(&brandCar); err != nil {
@@ -28,6 +39,14 @@ func (bcc *BrandCarController) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, brandCar)
 }
 
+// GetAll godoc
+// @Summary Get all brand cars
+// @Description Get a list of all brand cars
+// @Tags brand-cars
+// @Produce json
+// @Success 200 {array} models.BrandCar
+// @Failure 500 {object} map[string]string
+// @Router /brand-cars [get]
 func (bcc *BrandCarController) GetAll(c *gin.Context) {
 	var brandCars []models.BrandCar
 	if err := bcc.DB.Find(&brandCars).Error; err != nil {
@@ -38,6 +57,16 @@ func (bcc *BrandCarController) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, brandCars)
 }
 
+// GetByID godoc
+// @Summary Get a brand car by ID
+// @Description Get details of a specific brand car
+// @Tags brand-cars
+// @Produce json
+// @Param id path int true "Brand Car ID"
+// @Success 200 {object} models.BrandCar
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /brand-cars/{id} [get]
 func (bcc *BrandCarController) GetByID(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -54,6 +83,19 @@ func (bcc *BrandCarController) GetByID(c *gin.Context) {
 	c.JSON(http.StatusOK, brandCar)
 }
 
+// Update godoc
+// @Summary Update a brand car
+// @Description Update details of a specific brand car
+// @Tags brand-cars
+// @Accept json
+// @Produce json
+// @Param id path int true "Brand Car ID"
+// @Param brand_car body models.BrandCar true "Updated Brand Car object"
+// @Success 200 {object} models.BrandCar
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /brand-cars/{id} [put]
 func (bcc *BrandCarController) Update(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -80,6 +122,16 @@ func (bcc *BrandCarController) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, brandCar)
 }
 
+// Delete godoc
+// @Summary Delete a brand car
+// @Description Delete a specific brand car
+// @Tags brand-cars
+// @Produce json
+// @Param id path int true "Brand Car ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /brand-cars/{id} [delete]
 func (bcc *BrandCarController) Delete(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
