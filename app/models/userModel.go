@@ -7,7 +7,7 @@ type User struct {
 	Username    string    `gorm:"column:username;type:varchar;size:255;not null" json:"username"`
 	Email       string    `gorm:"column:email;type:varchar;size:255;not null" json:"email"`
 	Password    string    `gorm:"column:password;type:varchar;not null" json:"password"`
-	PhoneNumber int       `gorm:"column:phone_number;type:int" json:"phone_number"`
+	PhoneNumber string    `gorm:"column:phone_number;type:varchar;size:255;not null" json:"phone_number"`
 	Address     string    `gorm:"column:address;type:varchar;size:255" json:"address"`
 	RoleID      int       `json:"role_id"`
 	Role        Role      `gorm:"foreignKey:RoleID" json:"role,omitempty"`
@@ -32,8 +32,10 @@ type InputChangePassword struct {
 }
 
 type UserList struct {
-	ID       uint   `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	RoleName string `json:"role,omitempty"`
+	ID          uint   `json:"id"`
+	Username    string `json:"username"`
+	PhoneNumber string `json:"phone_number"`
+	Address     string `json:"address"`
+	Email       string `json:"email"`
+	RoleName    string `json:"role,omitempty"`
 }
