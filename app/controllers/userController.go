@@ -32,10 +32,12 @@ func (ctrl *UserController) FindAll(c *gin.Context) {
 	var listUsers []models.UserList
 	for _, res := range users {
 		listUsers = append(listUsers, models.UserList{
-			ID:       res.ID,
-			Username: res.Username,
-			Email:    res.Email,
-			RoleName: res.Role.RoleName,
+			ID:          res.ID,
+			Username:    res.Username,
+			PhoneNumber: res.PhoneNumber,
+			Address:     res.Address,
+			Email:       res.Email,
+			RoleName:    res.Role.RoleName,
 		})
 	}
 
