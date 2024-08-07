@@ -115,11 +115,6 @@ const docTemplate = `{
         },
         "/api/cms/brand-cars": {
             "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
                 "description": "Get a list of all brand cars",
                 "produces": [
                     "application/json"
@@ -128,15 +123,6 @@ const docTemplate = `{
                     "brand-cars"
                 ],
                 "summary": "Get all brand cars",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -223,11 +209,6 @@ const docTemplate = `{
         },
         "/api/cms/brand-cars/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
                 "description": "Get details of a specific brand car",
                 "produces": [
                     "application/json"
@@ -237,13 +218,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get a brand car by ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Brand Car ID",
@@ -420,11 +394,6 @@ const docTemplate = `{
         },
         "/api/cms/cars": {
             "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
                 "description": "Get a list of all cars with their types and brands",
                 "produces": [
                     "application/json"
@@ -433,15 +402,6 @@ const docTemplate = `{
                     "cars"
                 ],
                 "summary": "Get all cars",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -528,11 +488,6 @@ const docTemplate = `{
         },
         "/api/cms/cars/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
                 "description": "Get details of a specific car including its type and brand",
                 "produces": [
                     "application/json"
@@ -542,13 +497,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get a car by ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Car ID",
@@ -1258,11 +1206,6 @@ const docTemplate = `{
         },
         "/api/cms/type-cars": {
             "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
                 "description": "Get a list of all type cars",
                 "produces": [
                     "application/json"
@@ -1271,15 +1214,6 @@ const docTemplate = `{
                     "type-cars"
                 ],
                 "summary": "Get all type cars",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1366,11 +1300,6 @@ const docTemplate = `{
         },
         "/api/cms/type-cars/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerToken": []
-                    }
-                ],
                 "description": "Get details of a specific type car including associated cars",
                 "produces": [
                     "application/json"
@@ -1380,13 +1309,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get a type car by ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Type Car ID",
@@ -1801,6 +1723,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "image_car": {
+                    "type": "string"
+                },
                 "is_second": {
                     "type": "boolean"
                 },
@@ -1849,6 +1774,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "image_car": {
+                    "type": "string"
                 },
                 "is_second": {
                     "type": "boolean"
@@ -1977,6 +1905,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transaction_date": {
+                    "type": "string"
+                },
+                "transaction_image": {
                     "type": "string"
                 },
                 "updated_at": {

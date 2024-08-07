@@ -5,6 +5,8 @@ definitions:
         type: integer
       description:
         type: string
+      image_car:
+        type: string
       is_second:
         type: boolean
       name:
@@ -42,6 +44,8 @@ definitions:
         type: string
       id:
         type: integer
+      image_car:
+        type: string
       is_second:
         type: boolean
       name:
@@ -126,6 +130,8 @@ definitions:
       payment_provider:
         type: string
       transaction_date:
+        type: string
+      transaction_image:
         type: string
       updated_at:
         type: string
@@ -229,12 +235,6 @@ paths:
   /api/cms/brand-cars:
     get:
       description: Get a list of all brand cars
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -250,8 +250,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - BearerToken: []
       summary: Get all brand cars
       tags:
       - brand-cars
@@ -338,11 +336,6 @@ paths:
     get:
       description: Get details of a specific brand car
       parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Brand Car ID
         in: path
         name: id
@@ -367,8 +360,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - BearerToken: []
       summary: Get a brand car by ID
       tags:
       - brand-cars
@@ -426,12 +417,6 @@ paths:
   /api/cms/cars:
     get:
       description: Get a list of all cars with their types and brands
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -447,8 +432,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - BearerToken: []
       summary: Get all cars
       tags:
       - cars
@@ -541,11 +524,6 @@ paths:
     get:
       description: Get details of a specific car including its type and brand
       parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Car ID
         in: path
         name: id
@@ -570,8 +548,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - BearerToken: []
       summary: Get a car by ID
       tags:
       - cars
@@ -979,12 +955,6 @@ paths:
   /api/cms/type-cars:
     get:
       description: Get a list of all type cars
-      parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1000,8 +970,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - BearerToken: []
       summary: Get all type cars
       tags:
       - type-cars
@@ -1088,11 +1056,6 @@ paths:
     get:
       description: Get details of a specific type car including associated cars
       parameters:
-      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Type Car ID
         in: path
         name: id
@@ -1117,8 +1080,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - BearerToken: []
       summary: Get a type car by ID
       tags:
       - type-cars

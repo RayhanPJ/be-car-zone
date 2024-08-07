@@ -72,8 +72,6 @@ func (cc *CarController) Create(c *gin.Context) {
 // @Description Get a list of all cars with their types and brands
 // @Tags cars
 // @Produce json
-// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Security BearerToken
 // @Success 200 {array} models.Car
 // @Failure 500 {object} map[string]string
 // @Router /api/cms/cars [get]
@@ -92,8 +90,6 @@ func (cc *CarController) GetAll(c *gin.Context) {
 // @Description Get details of a specific car including its type and brand
 // @Tags cars
 // @Produce json
-// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Security BearerToken
 // @Param id path int true "Car ID"
 // @Success 200 {object} models.Car
 // @Failure 400 {object} map[string]string

@@ -94,22 +94,22 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 
 	// Car
 	cmsRoute.POST("/cars", carController.Create)
-	cmsRoute.GET("/cars", carController.GetAll)
-	cmsRoute.GET("/cars/:id", carController.GetByID)
+	r.GET("/cars", carController.GetAll)
+	r.GET("/cars/:id", carController.GetByID)
 	cmsRoute.PUT("/cars/:id", carController.Update)
 	cmsRoute.DELETE("/cars/:id", carController.Delete)
 
 	// BrandCar
 	cmsRoute.POST("/brand-cars", brandCarController.Create)
-	cmsRoute.GET("/brand-cars", brandCarController.GetAll)
-	cmsRoute.GET("/brand-cars/:id", brandCarController.GetByID)
+	r.GET("/brand-cars", brandCarController.GetAll)
+	r.GET("/brand-cars/:id", brandCarController.GetByID)
 	cmsRoute.PUT("/brand-cars/:id", brandCarController.Update)
 	cmsRoute.DELETE("/brand-cars/:id", brandCarController.Delete)
 
 	// TypeCar
 	cmsRoute.POST("/type-cars", typeCarController.Create)
-	cmsRoute.GET("/type-cars", typeCarController.GetAll)
-	cmsRoute.GET("/type-cars/:id", typeCarController.GetByID)
+	r.GET("/type-cars", typeCarController.GetAll)
+	r.GET("/type-cars/:id", typeCarController.GetByID)
 	cmsRoute.PUT("/type-cars/:id", typeCarController.Update)
 	cmsRoute.DELETE("/type-cars/:id", typeCarController.Delete)
 
