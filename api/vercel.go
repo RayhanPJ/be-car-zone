@@ -33,8 +33,8 @@ func init() {
 	}
 
 	// Set Swagger info
-	docs.SwaggerInfo.Title = "News API"
-	docs.SwaggerInfo.Description = "This is a sample server News."
+	docs.SwaggerInfo.Title = "Car Zone API"
+	docs.SwaggerInfo.Description = "This is a sample server Car Zone."
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = utils.Getenv("HOST", "localhost:8080")
 	if environment == "development" {
