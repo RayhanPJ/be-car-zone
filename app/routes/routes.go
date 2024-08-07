@@ -62,55 +62,56 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	authRoute.POST("/change-password", authController.ChangePassword, middlewares.JwtAuthMiddleware(utils.RoleUser, utils.RoleAdmin))
 
 	// CMS Route
-	cmsRoute := r.Group("/api/cms/", middlewares.JwtAuthMiddleware(utils.RoleAdmin))
+	cmsRouteAdmin := r.Group("/api/cms/", middlewares.JwtAuthMiddleware(utils.RoleAdmin))
+	cmsRouteAllRole := r.Group("/api/cms/", middlewares.JwtAuthMiddleware(utils.RoleUser, utils.RoleAdmin))
 
 	// CMS User
-	cmsRoute.GET("/users", userController.FindAll)
-	cmsRoute.GET("/users/:id", userController.FindByID)
-	cmsRoute.POST("/users", userController.Create)
-	cmsRoute.PUT("/users/:id", userController.Update)
-	cmsRoute.DELETE("/users/:id", userController.Delete)
+	cmsRouteAdmin.GET("/users", userController.FindAll)
+	cmsRouteAdmin.GET("/users/:id", userController.FindByID)
+	cmsRouteAdmin.POST("/users", userController.Create)
+	cmsRouteAdmin.PUT("/users/:id", userController.Update)
+	cmsRouteAdmin.DELETE("/users/:id", userController.Delete)
 
 	// CMS Role
-	cmsRoute.GET("/roles", roleController.FindAll)
-	cmsRoute.GET("/roles/:id", roleController.FindByID)
-	cmsRoute.POST("/roles", roleController.Create)
-	cmsRoute.PUT("/roles/:id", roleController.Update)
-	cmsRoute.DELETE("/roles/:id", roleController.Delete)
+	cmsRouteAdmin.GET("/roles", roleController.FindAll)
+	cmsRouteAdmin.GET("/roles/:id", roleController.FindByID)
+	cmsRouteAdmin.POST("/roles", roleController.Create)
+	cmsRouteAdmin.PUT("/roles/:id", roleController.Update)
+	cmsRouteAdmin.DELETE("/roles/:id", roleController.Delete)
 
 	// CMS Order
-	cmsRoute.GET("/orders", orderController.FindAll)
-	cmsRoute.GET("/orders/:id", orderController.FindByID)
-	cmsRoute.POST("/orders", orderController.Create)
-	cmsRoute.PUT("/orders/:id", orderController.Update)
-	cmsRoute.DELETE("/orders/:id", orderController.Delete)
+	cmsRouteAllRole.GET("/orders", orderController.FindAll)
+	cmsRouteAllRole.GET("/orders/:id", orderController.FindByID)
+	cmsRouteAllRole.POST("/orders", orderController.Create)
+	cmsRouteAllRole.PUT("/orders/:id", orderController.Update)
+	cmsRouteAllRole.DELETE("/orders/:id", orderController.Delete)
 
 	// CMS Transaction
-	cmsRoute.GET("/transactions", transactionController.FindAll)
-	cmsRoute.GET("/transactions/:id", transactionController.FindByID)
-	cmsRoute.POST("/transactions", transactionController.Create)
-	cmsRoute.PUT("/transactions/:id", transactionController.Update)
-	cmsRoute.DELETE("/transactions/:id", transactionController.Delete)
+	cmsRouteAllRole.GET("/transactions", transactionController.FindAll)
+	cmsRouteAllRole.GET("/transactions/:id", transactionController.FindByID)
+	cmsRouteAllRole.POST("/transactions", transactionController.Create)
+	cmsRouteAllRole.PUT("/transactions/:id", transactionController.Update)
+	cmsRouteAllRole.DELETE("/transactions/:id", transactionController.Delete)
 
 	// Car
-	cmsRoute.POST("/cars", carController.Create)
+	cmsRouteAdmin.POST("/cars", carController.Create)
 	r.GET("/api/cms/cars", carController.GetAll)
 	r.GET("/api/cms/cars/:id", carController.GetByID)
-	cmsRoute.PUT("/cars/:id", carController.Update)
-	cmsRoute.DELETE("/cars/:id", carController.Delete)
+	cmsRouteAdmin.PUT("/cars/:id", carController.Update)
+	cmsRouteAdmin.DELETE("/cars/:id", carController.Delete)
 
 	// BrandCar
-	cmsRoute.POST("/brand-cars", brandCarController.Create)
+	cmsRouteAdmin.POST("/brand-cars", brandCarController.Create)
 	r.GET("/api/cms/brand-cars", brandCarController.GetAll)
 	r.GET("/api/cms/brand-cars/:id", brandCarController.GetByID)
-	cmsRoute.PUT("/brand-cars/:id", brandCarController.Update)
-	cmsRoute.DELETE("/brand-cars/:id", brandCarController.Delete)
+	cmsRouteAdmin.PUT("/brand-cars/:id", brandCarController.Update)
+	cmsRouteAdmin.DELETE("/brand-cars/:id", brandCarController.Delete)
 
 	// TypeCar
-	cmsRoute.POST("/type-cars", typeCarController.Create)
+	cmsRouteAdmin.POST("/type-cars", typeCarController.Create)
 	r.GET("/api/cms/type-cars", typeCarController.GetAll)
 	r.GET("/api/cms/type-cars/:id", typeCarController.GetByID)
-	cmsRoute.PUT("/type-cars/:id", typeCarController.Update)
-	cmsRoute.DELETE("/type-cars/:id", typeCarController.Delete)
+	cmsRouteAdmin.PUT("/type-cars/:id", typeCarController.Update)
+	cmsRouteAdmin.DELETE("/type-cars/:id", typeCarController.Delete)
 
 }
