@@ -24,7 +24,7 @@ type OrderController struct {
 // @Router /api/cms/orders [get]
 func (ctrl *OrderController) FindAll(c *gin.Context) {
 	var orders []models.Order
-	if err := ctrl.DB.Preload("Car").Find(&orders).Error; err != nil {
+	if err := ctrl.DB.Preload("Car").Order("created_at DESC").Find(&orders).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -37,6 +37,7 @@ func (ctrl *OrderController) FindAll(c *gin.Context) {
 			CarID:      order.CarID,
 			TotalPrice: order.TotalPrice,
 			Status:     order.Status,
+			OrderImage: order.OrderImage,
 			CreatedAt:  order.CreatedAt,
 			UpdatedAt:  order.UpdatedAt,
 			Car: models.CarDetail{
@@ -110,6 +111,7 @@ func (ctrl *OrderController) Create(c *gin.Context) {
 		CarID:      req.CarID,
 		TotalPrice: req.TotalPrice,
 		Status:     req.Status,
+		OrderImage: req.OrderImage,
 		CreatedAt:  time.Now(),
 	}
 
@@ -158,6 +160,7 @@ func (ctrl *OrderController) Update(c *gin.Context) {
 	order.CarID = req.CarID
 	order.TotalPrice = req.TotalPrice
 	order.Status = req.Status
+	order.OrderImage = req.OrderImage
 	order.UpdatedAt = time.Now()
 
 	if err := ctrl.DB.Save(&order).Error; err != nil {

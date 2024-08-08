@@ -22,7 +22,7 @@ type RoleController struct {
 // @Router /api/cms/roles [get]
 func (ctrl *RoleController) FindAll(c *gin.Context) {
 	var roles []models.Role
-	if err := ctrl.DB.Find(&roles).Error; err != nil {
+	if err := ctrl.DB.Order("created_at DESC").Find(&roles).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
