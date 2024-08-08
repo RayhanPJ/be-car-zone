@@ -12,9 +12,8 @@ type Order struct {
 	Status     bool      `json:"status"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
-
-	User User `json:"-"`
-	Car  Car  `json:"-"`
+	User       User      `json:"-" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Car        Car       `json:"-" gorm:"foreignKey:CarID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
 type OrderDetail struct {
@@ -29,7 +28,7 @@ type OrderDetail struct {
 }
 
 type CarDetail struct {
-	ID          int       `json:"id"`
+	ID          uint      `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	ImageCar    string    `json:"image_car"`

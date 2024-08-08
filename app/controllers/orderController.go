@@ -88,6 +88,10 @@ func (ctrl *OrderController) FindByID(c *gin.Context) {
 // @Router /api/cms/orders [post]
 func (ctrl *OrderController) Create(c *gin.Context) {
 	var req models.Order
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	var userId, _ = jwt.ExtractTokenID(c)
 
 	// Cari user berdasarkan userID

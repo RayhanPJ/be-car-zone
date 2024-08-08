@@ -59,6 +59,29 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.InputChangePassword:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  models.Invoice:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      order_id:
+        type: integer
+      transaction_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
   models.LoginRequest:
     properties:
       password:
@@ -125,6 +148,8 @@ definitions:
         type: integer
       no_rek:
         type: string
+      order:
+        $ref: '#/definitions/models.Order'
       order_id:
         type: integer
       payment_provider:
@@ -149,6 +174,8 @@ definitions:
     type: object
   models.User:
     properties:
+      address:
+        type: string
       created_at:
         type: string
       email:
@@ -156,6 +183,8 @@ definitions:
       id:
         type: integer
       password:
+        type: string
+      phone_number:
         type: string
       role:
         $ref: '#/definitions/models.Role'
@@ -169,6 +198,49 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/auth/change-password:
+    post:
+      description: Change Password User by token.
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Change Password Request Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.InputChangePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Password changed successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "string"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: '{"error": "string"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: '{"error": "string"}'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerToken: []
+      summary: Change Password User by token.
+      tags:
+      - Auth
   /api/auth/login:
     post:
       description: Logging in to get jwt token to access admin or user api by roles.
@@ -602,6 +674,131 @@ paths:
       summary: Update a car
       tags:
       - cars
+  /api/cms/invoices:
+    get:
+      description: Get all invoices
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Invoice'
+      summary: Get all invoices
+      tags:
+      - invoices
+    post:
+      consumes:
+      - application/json
+      description: Create new invoice
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Invoice Data
+        in: body
+        name: invoice
+        required: true
+        schema:
+          $ref: '#/definitions/models.Invoice'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Invoice'
+      summary: Create new invoice
+      tags:
+      - invoices
+  /api/cms/invoices/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete invoice
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Invoice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Invoice'
+      summary: Delete invoice
+      tags:
+      - invoices
+    get:
+      description: Get invoice by id
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Invoice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Invoice'
+      summary: Get invoice by id
+      tags:
+      - invoices
+    put:
+      consumes:
+      - application/json
+      description: Update invoice
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Invoice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Invoice Data
+        in: body
+        name: invoice
+        required: true
+        schema:
+          $ref: '#/definitions/models.Invoice'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Invoice'
+      summary: Update invoice
+      tags:
+      - invoices
   /api/cms/orders:
     get:
       description: Get all orders

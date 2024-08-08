@@ -145,10 +145,10 @@ func (ctrl *AuthController) GetCurrentUser(c *gin.Context) {
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Param body body models.InputChangePassword true "Change Password Request Body"
 // @Security BearerToken
-// @Success 200 {object} gin.H{"message": "Password changed successfully"}
-// @Failure 400 {object} gin.H{"error": "string"}
-// @Failure 401 {object} gin.H{"error": "string"}
-// @Failure 500 {object} gin.H{"error": "string"}
+// @Success 200 {object} map[string]interface{} "{"message": "Password changed successfully"}"
+// @Failure 400 {object} map[string]interface{} "{"error": "string"}"
+// @Failure 401 {object} map[string]interface{} "{"error": "string"}"
+// @Failure 500 {object} map[string]interface{} "{"error": "string"}"
 // @Router /api/auth/change-password [post]
 func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 	var input models.InputChangePassword

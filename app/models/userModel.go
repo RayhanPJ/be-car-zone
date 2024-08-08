@@ -7,7 +7,7 @@ type User struct {
 	Username    string    `gorm:"column:username;type:varchar;size:255;not null" json:"username"`
 	Email       string    `gorm:"column:email;type:varchar;size:255;not null" json:"email"`
 	Password    string    `gorm:"column:password;type:varchar;not null" json:"password"`
-	PhoneNumber string    `gorm:"column:phone_number;type:varchar;size:255;not null" json:"phone_number"`
+	PhoneNumber string    `gorm:"column:phone_number;type:varchar;size:255" json:"phone_number"`
 	Address     string    `gorm:"column:address;type:varchar;size:255" json:"address"`
 	RoleID      int       `json:"role_id"`
 	Role        Role      `gorm:"foreignKey:RoleID" json:"role,omitempty"`

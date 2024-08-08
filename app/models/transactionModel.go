@@ -15,7 +15,7 @@ type Transaction struct {
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 
-	Order Order `json:"-"`
+	Order Order `json:"order" gorm:"foreignKey:OrderID"`
 }
 
 type TransactionDetail struct {
