@@ -3,6 +3,7 @@ package controllers
 import (
 	"be-car-zone/app/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -30,15 +31,15 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 	var transactionDetails []models.TransactionDetail
 	for _, transaction := range transactions {
 		transactionDetails = append(transactionDetails, models.TransactionDetail{
-			ID:              transaction.ID,
-			OrderID:         transaction.OrderID,
-			PaymentProvider: transaction.PaymentProvider,
+			ID:               transaction.ID,
+			OrderID:          transaction.OrderID,
+			PaymentProvider:  transaction.PaymentProvider,
 			TransactionImage: transaction.TransactionImage,
-			NoRek:           transaction.NoRek,
-			Amount:          transaction.Amount,
-			TransactionDate: transaction.TransactionDate,
-			CreatedAt:       transaction.CreatedAt,
-			UpdatedAt:       transaction.UpdatedAt,
+			NoRek:            transaction.NoRek,
+			Amount:           transaction.Amount,
+			TransactionDate:  transaction.TransactionDate,
+			CreatedAt:        transaction.CreatedAt,
+			UpdatedAt:        transaction.UpdatedAt,
 			Order: models.OrderDetail{
 				ID:         transaction.Order.ID,
 				UserID:     transaction.Order.UserID,
@@ -95,19 +96,24 @@ func (ctrl *TransactionController) FindByID(c *gin.Context) {
 // @Success 200 {object} models.Transaction
 // @Router /api/cms/transactions [post]
 func (ctrl *TransactionController) Create(c *gin.Context) {
-	var transaction models.Transaction
+	var req models.Transaction
 
-	if err := c.ShouldBindJSON(&transaction); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	newTransaction := models.Transaction{
+		OrderID:          req.OrderID,
+		PaymentProvider:  req.PaymentProvider,
+		TransactionImage: req.TransactionImage,
+		NoRek:            req.NoRek,
+		Amount:           req.Amount,
+		TransactionDate:  time.Now(),
+		CreatedAt:        time.Now(),
 	}
 
-	if err := ctrl.DB.Create(&transaction).Error; err != nil {
+	if err := ctrl.DB.Create(&newTransaction).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": transaction})
+	c.JSON(http.StatusOK, gin.H{"data": newTransaction})
 }
 
 // Update godoc
@@ -128,10 +134,14 @@ func (ctrl *TransactionController) Update(c *gin.Context) {
 		return
 	}
 
-	if err := c.ShouldBindJSON(&transaction); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	var req models.Transaction
+	// Update fields
+	transaction.OrderID = req.OrderID
+	transaction.PaymentProvider = req.PaymentProvider
+	transaction.TransactionImage = req.TransactionImage
+	transaction.NoRek = req.NoRek
+	transaction.Amount = req.Amount
+	transaction.UpdatedAt = time.Now()
 
 	if err := ctrl.DB.Save(&transaction).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
