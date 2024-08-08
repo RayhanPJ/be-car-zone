@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"be-car-zone/app/models"
+	"be-car-zone/app/pkg/jwt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -85,19 +87,34 @@ func (ctrl *OrderController) FindByID(c *gin.Context) {
 // @Success 200 {object} models.Order
 // @Router /api/cms/orders [post]
 func (ctrl *OrderController) Create(c *gin.Context) {
-	var order models.Order
+	var req models.Order
+	var userId, _ = jwt.ExtractTokenID(c)
 
-	if err := c.ShouldBindJSON(&order); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Cari user berdasarkan userID
+	var user models.User
+	if err := ctrl.DB.Where("id = ?", userId).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 
-	if err := ctrl.DB.Create(&order).Error; err != nil {
+	newOrder := models.Order{
+		UserID:     userId,
+		CarID:      req.CarID,
+		TotalPrice: req.TotalPrice,
+		Status:     req.Status,
+		CreatedAt:  time.Now(),
+	}
+
+	if err := ctrl.DB.Create(&newOrder).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": order})
+	c.JSON(http.StatusOK, gin.H{"data": newOrder})
 }
 
 // Update godoc
@@ -118,10 +135,26 @@ func (ctrl *OrderController) Update(c *gin.Context) {
 		return
 	}
 
-	if err := c.ShouldBindJSON(&order); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var userId, _ = jwt.ExtractTokenID(c)
+
+	// Cari user berdasarkan userID
+	var user models.User
+	if err := ctrl.DB.Where("id = ?", userId).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
+
+	var req models.Order
+	// Update fields
+	order.UserID = userId
+	order.CarID = req.CarID
+	order.TotalPrice = req.TotalPrice
+	order.Status = req.Status
+	order.UpdatedAt = time.Now()
 
 	if err := ctrl.DB.Save(&order).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
