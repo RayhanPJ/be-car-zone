@@ -93,6 +93,13 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	cmsRouteAllRole.PUT("/transactions/:id", transactionController.Update)
 	cmsRouteAllRole.DELETE("/transactions/:id", transactionController.Delete)
 
+	// CMS Invoice
+	cmsRouteAllRole.GET("/invoices", transactionController.FindAll)
+	cmsRouteAllRole.GET("/invoices/:id", transactionController.FindByID)
+	cmsRouteAllRole.POST("/invoices", transactionController.Create)
+	cmsRouteAllRole.PUT("/invoices/:id", transactionController.Update)
+	cmsRouteAllRole.DELETE("/invoices/:id", transactionController.Delete)
+
 	// Car
 	cmsRouteAdmin.POST("/cars", carController.Create)
 	r.GET("/api/cms/cars", carController.GetAll)

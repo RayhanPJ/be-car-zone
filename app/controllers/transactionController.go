@@ -97,6 +97,10 @@ func (ctrl *TransactionController) FindByID(c *gin.Context) {
 // @Router /api/cms/transactions [post]
 func (ctrl *TransactionController) Create(c *gin.Context) {
 	var req models.Transaction
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	newTransaction := models.Transaction{
 		OrderID:          req.OrderID,

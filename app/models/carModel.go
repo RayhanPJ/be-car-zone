@@ -3,10 +3,10 @@ package models
 import "time"
 
 type Car struct {
-	ID          int
+	ID          uint      `gorm:"primaryKey" json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	ImageCar string    `json:"image_car"`
+	ImageCar    string    `json:"image_car"`
 	Price       float64   `json:"price"`
 	TypeID      uint      `json:"type_id"`
 	BrandID     uint      `json:"brand_id"`

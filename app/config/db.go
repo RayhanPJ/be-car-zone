@@ -54,7 +54,7 @@ func ConnectDataBase() *gorm.DB {
 
 	}
 
-	db.AutoMigrate(
+	errs := db.AutoMigrate(
 		&models.User{},
 		&models.Role{},
 		&models.Invoice{},
@@ -64,6 +64,10 @@ func ConnectDataBase() *gorm.DB {
 		&models.TypeCar{},
 		&models.BrandCar{},
 	)
+
+	if errs != nil {
+		log.Fatalf(`Failed Migrate %v`, errs)
+	}
 
 	return db
 
