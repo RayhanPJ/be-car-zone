@@ -7,6 +7,7 @@ type Car struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Price       float64   `json:"price"`
+	ImageUrl    string    `json:"image_url"`
 	TypeID      uint      `json:"type_id"`
 	BrandID     uint      `json:"brand_id"`
 	IsSecond    bool      `json:"is_second"`
