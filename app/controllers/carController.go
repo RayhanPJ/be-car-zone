@@ -77,7 +77,7 @@ func (cc *CarController) Create(c *gin.Context) {
 // @Router /api/cms/cars [get]
 func (cc *CarController) GetAll(c *gin.Context) {
 	var cars []models.Car
-	if err := cc.DB.Preload("Type").Preload("Brand").Find(&cars).Error; err != nil {
+	if err := cc.DB.Preload("Type").Preload("Brand").Order("created_at DESC").Find(&cars).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve cars"})
 		return
 	}

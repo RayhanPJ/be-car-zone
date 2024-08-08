@@ -10,6 +10,7 @@ type Order struct {
 	CarID      uint      `json:"car_id"`
 	TotalPrice float64   `json:"total_price"`
 	Status     bool      `json:"status"`
+	OrderImage string    `json:"order_image"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 	User       User      `json:"-" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
@@ -22,6 +23,7 @@ type OrderDetail struct {
 	CarID      uint      `json:"car_id"`
 	TotalPrice float64   `json:"total_price"`
 	Status     bool      `json:"status"`
+	OrderImage string    `json:"order_image"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 	Car        CarDetail `json:"car"`

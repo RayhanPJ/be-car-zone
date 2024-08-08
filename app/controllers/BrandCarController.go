@@ -51,7 +51,7 @@ func (bcc *BrandCarController) Create(c *gin.Context) {
 // @Router /api/cms/brand-cars [get]
 func (bcc *BrandCarController) GetAll(c *gin.Context) {
 	var brandCars []models.BrandCar
-	if err := bcc.DB.Find(&brandCars).Error; err != nil {
+	if err := bcc.DB.Order("created_at DESC").Find(&brandCars).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

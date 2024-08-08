@@ -51,7 +51,7 @@ func (tcc *TypeCarController) Create(c *gin.Context) {
 // @Router /api/cms/type-cars [get]
 func (tcc *TypeCarController) GetAll(c *gin.Context) {
 	var typeCars []models.TypeCar
-	if err := tcc.DB.Find(&typeCars).Error; err != nil {
+	if err := tcc.DB.Order("created_at DESC").Find(&typeCars).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

@@ -24,7 +24,7 @@ type InvoiceController struct {
 // @Router /api/cms/invoices [get]
 func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 	var invoices []models.Invoice
-	if err := ctrl.DB.Preload("Car").Find(&invoices).Error; err != nil {
+	if err := ctrl.DB.Preload("Car").Order("created_at DESC").Find(&invoices).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -43,6 +43,7 @@ func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 				CarID:      invoice.Order.CarID,
 				TotalPrice: invoice.Order.TotalPrice,
 				Status:     invoice.Order.Status,
+				OrderImage:     invoice.Order.OrderImage,
 				CreatedAt:  invoice.Order.CreatedAt,
 				UpdatedAt:  invoice.Order.UpdatedAt,
 			},
@@ -50,7 +51,6 @@ func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 				ID:               invoice.Transaction.ID,
 				OrderID:          invoice.Transaction.OrderID,
 				PaymentProvider:  invoice.Transaction.PaymentProvider,
-				TransactionImage: invoice.Transaction.TransactionImage,
 				NoRek:            invoice.Transaction.NoRek,
 				Amount:           invoice.Transaction.Amount,
 				TransactionDate:  invoice.Transaction.TransactionDate,

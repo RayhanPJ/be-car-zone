@@ -24,7 +24,7 @@ type UserController struct {
 // @Router /api/cms/users [get]
 func (ctrl *UserController) FindAll(c *gin.Context) {
 	var users []models.User
-	if err := ctrl.DB.Preload("Role").Find(&users).Error; err != nil {
+	if err := ctrl.DB.Preload("Role").Order("created_at DESC").Find(&users).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}

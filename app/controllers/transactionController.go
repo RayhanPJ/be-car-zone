@@ -23,7 +23,7 @@ type TransactionController struct {
 // @Router /api/cms/transactions [get]
 func (ctrl *TransactionController) FindAll(c *gin.Context) {
 	var transactions []models.Transaction
-	if err := ctrl.DB.Preload("Order.Car").Find(&transactions).Error; err != nil {
+	if err := ctrl.DB.Preload("Order.Car").Order("created_at DESC").Find(&transactions).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -34,7 +34,6 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 			ID:               transaction.ID,
 			OrderID:          transaction.OrderID,
 			PaymentProvider:  transaction.PaymentProvider,
-			TransactionImage: transaction.TransactionImage,
 			NoRek:            transaction.NoRek,
 			Amount:           transaction.Amount,
 			TransactionDate:  transaction.TransactionDate,
@@ -46,6 +45,7 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 				CarID:      transaction.Order.CarID,
 				TotalPrice: transaction.Order.TotalPrice,
 				Status:     transaction.Order.Status,
+				OrderImage:     transaction.Order.OrderImage,
 				CreatedAt:  transaction.Order.CreatedAt,
 				UpdatedAt:  transaction.Order.UpdatedAt,
 				Car: models.CarDetail{
@@ -105,7 +105,6 @@ func (ctrl *TransactionController) Create(c *gin.Context) {
 	newTransaction := models.Transaction{
 		OrderID:          req.OrderID,
 		PaymentProvider:  req.PaymentProvider,
-		TransactionImage: req.TransactionImage,
 		NoRek:            req.NoRek,
 		Amount:           req.Amount,
 		TransactionDate:  time.Now(),
@@ -142,7 +141,6 @@ func (ctrl *TransactionController) Update(c *gin.Context) {
 	// Update fields
 	transaction.OrderID = req.OrderID
 	transaction.PaymentProvider = req.PaymentProvider
-	transaction.TransactionImage = req.TransactionImage
 	transaction.NoRek = req.NoRek
 	transaction.Amount = req.Amount
 	transaction.UpdatedAt = time.Now()
