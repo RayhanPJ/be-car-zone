@@ -121,8 +121,8 @@ func (ctrl *UserController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Update existing user
-// @Description Update existing user
+// @Summary Update existing user by id (only admin)
+// @Description Update existing user by id (only admin)
 // @Tags users
 // @Accept json
 // @Produce json
@@ -155,6 +155,65 @@ func (ctrl *UserController) Update(c *gin.Context) {
 	user.Username = req.Username
 	user.Email = req.Email
 	user.RoleID = req.RoleID
+	user.PhoneNumber = req.PhoneNumber
+	user.UpdatedAt = time.Now()
+
+	// Hash the password if it is being updated
+	if req.Password != "" {
+		hashedPassword, err := utils.HashPassword(req.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	if err := ctrl.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+// Update godoc
+// @Summary Update profile user or admin
+// @Description Update profile user or admin
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Param id path int true "User ID"
+// @Param user body models.User true "User Data"
+// @Success 200 {object} models.User
+// @Router /api/cms/user/profile/{id} [put]
+func (ctrl *UserController) UserUpdate(c *gin.Context) {
+	var req models.User
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	validate := utils.NewValidator()
+	if err := utils.ValidateStruct(validate, &req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var user models.User
+	if err := ctrl.DB.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "user not found"})
+		return
+	}
+
+	// Update fields
+	user.Username = req.Username
+	user.Email = req.Email
+	user.RoleID = utils.IDRoleUser
+	user.Address = req.Address
+	user.PhoneNumber = req.PhoneNumber
+	user.UpdatedAt = time.Now()
 
 	// Hash the password if it is being updated
 	if req.Password != "" {

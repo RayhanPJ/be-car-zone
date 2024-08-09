@@ -71,6 +71,7 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	cmsRouteAdmin.POST("/users", userController.Create)
 	cmsRouteAdmin.PUT("/users/:id", userController.Update)
 	cmsRouteAdmin.DELETE("/users/:id", userController.Delete)
+	cmsRouteAllRole.PUT("/user/profile/:id", userController.UserUpdate)
 
 	// CMS Role
 	cmsRouteAdmin.GET("/roles", roleController.FindAll)
