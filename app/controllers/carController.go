@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -50,7 +51,6 @@ func (cc *CarController) Create(c *gin.Context) {
 		Description: input.Description,
 		ImageCar:    input.ImageCar,
 		Price:       input.Price,
-		ImageUrl:    input.ImageUrl,
 		TypeID:      input.TypeID,
 		BrandID:     input.BrandID,
 		IsSecond:    input.IsSecond,
@@ -150,7 +150,6 @@ func (cc *CarController) Update(c *gin.Context) {
 	car.Name = input.Name
 	car.Description = input.Description
 	car.Price = input.Price
-	car.ImageUrl = input.ImageUrl
 	car.TypeID = input.TypeID
 	car.BrandID = input.BrandID
 	car.IsSecond = input.IsSecond
@@ -200,4 +199,53 @@ func (cc *CarController) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Car deleted successfully"})
+}
+
+// GetCarChartData godoc
+// @Summary Get car sales data per month
+// @Description Retrieve car sales data grouped by month for admin access only
+// @Tags cars
+// @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
+// @Success 200 {object} map[string][]Result "Successful response containing sales data"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /api/cms/cars/chart-data [get]
+func (cc *CarController) GetCarChartData(c *gin.Context) {
+	type Result struct {
+		Month string `json:"month"`
+		Count int    `json:"count"`
+	}
+	var results []Result
+
+	// Ensure the user is an admin or has the correct permissions
+	userRole, exists := c.Get("user_role")
+	if !exists || userRole != "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	log.Printf("User Role: %s\n", userRole) // Add this log
+
+	// Query to build chart data
+	err := cc.DB.Model(&models.Car{}).
+		Select("to_char(date_trunc('month', created_at), 'YYYY-MM') as month, count(*) as count").
+		Where("sold = ?", true).
+		Group("month").
+		Order("month").
+		Scan(&results).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get chart data"})
+		return
+	}
+
+	// Format the month data
+	for i := range results {
+		results[i].Month = results[i].Month[:7]
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": results})
 }
