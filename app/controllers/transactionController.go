@@ -138,6 +138,10 @@ func (ctrl *TransactionController) Update(c *gin.Context) {
 	}
 
 	var req models.Transaction
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	// Update fields
 	transaction.OrderID = req.OrderID
 	transaction.PaymentProvider = req.PaymentProvider
