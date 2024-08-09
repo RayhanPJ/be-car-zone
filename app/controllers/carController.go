@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -226,8 +225,6 @@ func (cc *CarController) GetCarChartData(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
 		return
 	}
-
-	log.Printf("User Role: %s\n", userRole) // Add this log
 
 	// Query to build chart data
 	err := cc.DB.Model(&models.Car{}).
