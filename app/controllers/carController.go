@@ -168,6 +168,7 @@ func (cc *CarController) Update(c *gin.Context) {
 	}
 
 	car.Name = input.Name
+	car.ImageCar = input.ImageCar
 	car.Description = input.Description
 	car.Price = input.Price
 	car.TypeID = input.TypeID
