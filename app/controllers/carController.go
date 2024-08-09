@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"net/http"
+	"sort"
 	"strconv"
+	"time"
 
 	"be-car-zone/app/models"
 
@@ -19,10 +21,22 @@ type CarInput struct {
 	TypeID      uint    `json:"type_id" binding:"required"`
 	BrandID     uint    `json:"brand_id" binding:"required"`
 	IsSecond    bool    `json:"is_second"`
+	Sold        bool    `json:"sold"`
 }
 
 type CarController struct {
 	DB *gorm.DB
+}
+
+type Result struct {
+	Period string `json:"period"`
+	Count  int    `json:"count"`
+}
+
+type WeeklyResult struct {
+	Date   string `json:"date"`
+	New    int    `json:"new"`
+	Second int    `json:"second"`
 }
 
 // Create godoc
@@ -53,6 +67,7 @@ func (cc *CarController) Create(c *gin.Context) {
 		TypeID:      input.TypeID,
 		BrandID:     input.BrandID,
 		IsSecond:    input.IsSecond,
+		Sold:        input.Sold,
 	}
 
 	if err := cc.DB.Create(&car).Error; err != nil {
@@ -152,6 +167,7 @@ func (cc *CarController) Update(c *gin.Context) {
 	car.TypeID = input.TypeID
 	car.BrandID = input.BrandID
 	car.IsSecond = input.IsSecond
+	car.Sold = input.Sold
 
 	if err := cc.DB.Save(&car).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update car"})
@@ -200,49 +216,79 @@ func (cc *CarController) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Car deleted successfully"})
 }
 
-// GetCarChartData godoc
-// @Summary Get car sales data per month
-// @Description Retrieve car sales data grouped by month for admin access only
-// @Tags cars
-// @Produce json
-// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Security BearerToken
-// @Success 200 {object} map[string][]Result "Successful response containing sales data"
-// @Failure 401 {object} map[string]string "Unauthorized"
-// @Failure 403 {object} map[string]string "Forbidden"
-// @Failure 500 {object} map[string]string "Internal Server Error"
-// @Router /api/cms/cars/chart-data [get]
+// GetCarChartData handles requests for car sales data by week, month, and year
+// @Summary Get car sales data
+// @Description Get the number of cars sold per week, month, and per year
+// @Tags Cars
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} gin.H{"weekly": []WeeklyResult, "monthly": []Result, "yearly": []Result}
+// @Failure 500 {object} gin.H{"error": "Failed to get cars data"}
+// @Router /cars/sales-data [get]
 func (cc *CarController) GetCarChartData(c *gin.Context) {
-	type Result struct {
-		Month string `json:"month"`
-		Count int    `json:"count"`
-	}
-	var results []Result
-
-	// Ensure the user is an admin or has the correct permissions
-	userRole, exists := c.Get("user_role")
-	if !exists || userRole != "admin" {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+	// Fetch sold cars data
+	var cars []models.Car
+	if err := cc.DB.Where("sold = ?", true).Find(&cars).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get cars data"})
 		return
 	}
 
-	// Query to build chart data
-	err := cc.DB.Model(&models.Car{}).
-		Select("to_char(date_trunc('month', created_at), 'YYYY-MM') as month, count(*) as count").
-		Where("sold = ?", true).
-		Group("month").
-		Order("month").
-		Scan(&results).Error
+	// Calculate weekly, monthly, and yearly sales
+	weeklySales := make(map[string]WeeklyResult)
+	monthlySales := make(map[string]int)
+	yearlySales := make(map[string]int)
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get chart data"})
-		return
+	// Get the current time and calculate the time 7 days ago
+	now := time.Now()
+	weekAgo := now.AddDate(0, 0, -7)
+
+	for _, car := range cars {
+		createdDate := car.CreatedAt
+
+		// Check if the car was sold in the last week
+		if createdDate.After(weekAgo) && createdDate.Before(now) {
+			date := createdDate.Format("2006-01-02")
+			weeklyResult := weeklySales[date]
+			if car.IsSecond {
+				weeklyResult.Second++
+			} else {
+				weeklyResult.New++
+			}
+			weeklySales[date] = weeklyResult
+		}
+
+		// Calculate monthly and yearly sales
+		month := createdDate.Format("2006-01")
+		year := createdDate.Format("2006")
+		monthlySales[month]++
+		yearlySales[year]++
 	}
 
-	// Format the month data
-	for i := range results {
-		results[i].Month = results[i].Month[:7]
+	// Prepare results
+	var weeklyResults []WeeklyResult
+	for _, result := range weeklySales {
+		weeklyResults = append(weeklyResults, result)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": results})
+	var monthlyResults, yearlyResults []Result
+	for month, count := range monthlySales {
+		monthlyResults = append(monthlyResults, Result{Period: month, Count: count})
+	}
+	for year, count := range yearlySales {
+		yearlyResults = append(yearlyResults, Result{Period: year, Count: count})
+	}
+
+	// Sort results
+	sort.Slice(weeklyResults, func(i, j int) bool {
+		return weeklyResults[i].Date < weeklyResults[j].Date
+	})
+	sort.Slice(monthlyResults, func(i, j int) bool {
+		return monthlyResults[i].Period < monthlyResults[j].Period
+	})
+	sort.Slice(yearlyResults, func(i, j int) bool {
+		return yearlyResults[i].Period < yearlyResults[j].Period
+	})
+
+	// Respond with the data
+	c.JSON(http.StatusOK, gin.H{"weekly": weeklyResults, "monthly": monthlyResults, "yearly": yearlyResults})
 }
