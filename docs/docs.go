@@ -2362,6 +2362,12 @@ const docTemplate = `{
         "models.TypeCar": {
             "type": "object",
             "properties": {
+                "cars": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Car"
+                    }
+                },
                 "id": {
                     "type": "integer"
                 },
