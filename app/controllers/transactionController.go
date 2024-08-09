@@ -77,7 +77,7 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 // @Router /api/cms/transactions/{id} [get]
 func (ctrl *TransactionController) FindByID(c *gin.Context) {
 	var transaction models.Transaction
-	if err := ctrl.DB.Where("id = ?", c.Param("id")).First(&transaction).Error; err != nil {
+	if err := ctrl.DB.Where("id = ?", c.Param("id")).Find(&transaction).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
 	}

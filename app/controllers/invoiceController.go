@@ -74,7 +74,7 @@ func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 // @Router /api/cms/invoices/{id} [get]
 func (ctrl *InvoiceController) FindByID(c *gin.Context) {
 	var invoice models.Invoice
-	if err := ctrl.DB.Where("id = ?", c.Param("id")).First(&invoice).Error; err != nil {
+	if err := ctrl.DB.Where("id = ?", c.Param("id")).Find(&invoice).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
 	}
