@@ -7,6 +7,8 @@ definitions:
         type: string
       image_car:
         type: string
+      image_url:
+        type: string
       is_second:
         type: boolean
       name:
@@ -45,6 +47,8 @@ definitions:
       id:
         type: integer
       image_car:
+        type: string
+      image_url:
         type: string
       is_second:
         type: boolean
@@ -100,6 +104,8 @@ definitions:
         type: string
       id:
         type: integer
+      order_image:
+        type: string
       status:
         type: boolean
       total_price:
@@ -155,8 +161,6 @@ definitions:
       payment_provider:
         type: string
       transaction_date:
-        type: string
-      transaction_image:
         type: string
       updated_at:
         type: string
@@ -753,7 +757,7 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Invoice ID
+      - description: User ID
         in: path
         name: id
         required: true
@@ -878,7 +882,7 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Order ID
+      - description: User ID
         in: path
         name: id
         required: true
@@ -1103,7 +1107,7 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Transaction ID
+      - description: User ID
         in: path
         name: id
         required: true
