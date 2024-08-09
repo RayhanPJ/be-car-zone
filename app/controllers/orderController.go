@@ -69,7 +69,7 @@ func (ctrl *OrderController) FindAll(c *gin.Context) {
 // @Router /api/cms/orders/{id} [get]
 func (ctrl *OrderController) FindByID(c *gin.Context) {
 	var order models.Order
-	if err := ctrl.DB.Where("id = ?", c.Param("id")).Find(&order).Error; err != nil {
+	if err := ctrl.DB.Where("user_id = ?", c.Param("id")).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
 	}
