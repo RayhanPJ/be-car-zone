@@ -155,6 +155,10 @@ func (ctrl *OrderController) Update(c *gin.Context) {
 	}
 
 	var req models.Order
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	// Update fields
 	order.UserID = userId
 	order.CarID = req.CarID
