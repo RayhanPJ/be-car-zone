@@ -70,7 +70,7 @@ func (tcc *TypeCarController) GetAll(c *gin.Context) {
 // @Failure 404 {object} map[string]string
 // @Router /api/cms/type-cars/{id} [get]
 func (tcc *TypeCarController) GetByID(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
