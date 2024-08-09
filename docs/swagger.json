@@ -1724,6 +1724,54 @@
                 }
             }
         },
+        "/api/cms/user/profile/{id}": {
+            "put": {
+                "description": "Update profile user or admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update profile user or admin",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
         "/api/cms/users": {
             "get": {
                 "description": "Get all users",
@@ -1828,7 +1876,7 @@
                 }
             },
             "put": {
-                "description": "Update existing user",
+                "description": "Update existing user by id (only admin)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1838,7 +1886,7 @@
                 "tags": [
                     "users"
                 ],
-                "summary": "Update existing user",
+                "summary": "Update existing user by id (only admin)",
                 "parameters": [
                     {
                         "type": "string",
@@ -2101,6 +2149,9 @@
                 "id": {
                     "type": "integer"
                 },
+                "order_image": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "boolean"
                 },
@@ -2184,9 +2235,6 @@
                     "type": "string"
                 },
                 "transaction_date": {
-                    "type": "string"
-                },
-                "transaction_image": {
                     "type": "string"
                 },
                 "updated_at": {
