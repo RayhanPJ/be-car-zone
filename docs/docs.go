@@ -2078,9 +2078,6 @@ const docTemplate = `{
                 "image_car": {
                     "type": "string"
                 },
-                "image_url": {
-                    "type": "string"
-                },
                 "is_second": {
                     "type": "boolean"
                 },
