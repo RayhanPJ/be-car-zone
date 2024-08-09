@@ -53,6 +53,7 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	userController := &controllers.UserController{DB: db}
 	roleController := &controllers.RoleController{DB: db}
 	transactionController := &controllers.TransactionController{DB: db}
+	invoiceController := &controllers.InvoiceController{DB: db}
 
 	// Authentication User
 	authRoute := r.Group("/api/auth")
@@ -95,11 +96,11 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	cmsRouteAllRole.DELETE("/transactions/:id", transactionController.Delete)
 
 	// CMS Invoice
-	cmsRouteAllRole.GET("/invoices", transactionController.FindAll)
-	cmsRouteAllRole.GET("/invoices/:id", transactionController.FindByID)
-	cmsRouteAllRole.POST("/invoices", transactionController.Create)
-	cmsRouteAllRole.PUT("/invoices/:id", transactionController.Update)
-	cmsRouteAllRole.DELETE("/invoices/:id", transactionController.Delete)
+	cmsRouteAllRole.GET("/invoices", invoiceController.FindAll)
+	cmsRouteAllRole.GET("/invoices/:id", invoiceController.FindByID)
+	cmsRouteAllRole.POST("/invoices", invoiceController.Create)
+	cmsRouteAllRole.PUT("/invoices/:id", invoiceController.Update)
+	cmsRouteAllRole.DELETE("/invoices/:id", invoiceController.Delete)
 
 	// Car
 	cmsRouteAdmin.POST("/cars", carController.Create)
