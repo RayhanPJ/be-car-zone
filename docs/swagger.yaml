@@ -15,6 +15,8 @@ definitions:
         type: string
       price:
         type: number
+      sold:
+        type: boolean
       type_id:
         type: integer
     required:
@@ -22,6 +24,37 @@ definitions:
     - name
     - price
     - type_id
+    type: object
+  controllers.CarSalesDataResponse:
+    properties:
+      monthly:
+        items:
+          $ref: '#/definitions/controllers.Result'
+        type: array
+      weekly:
+        items:
+          $ref: '#/definitions/controllers.WeeklyResult'
+        type: array
+      yearly:
+        items:
+          $ref: '#/definitions/controllers.Result'
+        type: array
+    type: object
+  controllers.Result:
+    properties:
+      count:
+        type: integer
+      period:
+        type: string
+    type: object
+  controllers.WeeklyResult:
+    properties:
+      date:
+        type: string
+      new:
+        type: integer
+      second:
+        type: integer
     type: object
   models.BrandCar:
     properties:
@@ -48,14 +81,14 @@ definitions:
         type: integer
       image_car:
         type: string
-      image_url:
-        type: string
       is_second:
         type: boolean
       name:
         type: string
       price:
         type: number
+      sold:
+        type: boolean
       type:
         $ref: '#/definitions/models.TypeCar'
       type_id:
@@ -167,10 +200,6 @@ definitions:
     type: object
   models.TypeCar:
     properties:
-      cars:
-        items:
-          $ref: '#/definitions/models.Car'
-        type: array
       id:
         type: integer
       name:
@@ -676,6 +705,40 @@ paths:
       security:
       - BearerToken: []
       summary: Update a car
+      tags:
+      - cars
+  /api/cms/cars/sales-data:
+    get:
+      description: Get the number of cars sold per week, month, and per year. Accessible
+        only by admin users.
+      parameters:
+      - description: 'Authorization. How to input in swagger : ''Bearer <insert_your_token_here>'''
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CarSalesDataResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerToken: []
+      summary: Get car sales data
       tags:
       - cars
   /api/cms/invoices:

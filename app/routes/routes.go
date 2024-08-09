@@ -105,7 +105,7 @@ func SetupRouter(db *gorm.DB, r *gin.Engine) {
 	cmsRouteAdmin.POST("/cars", carController.Create)
 	r.GET("/api/cms/cars", carController.GetAll)
 	r.GET("/api/cms/cars/:id", carController.GetByID)
-	cmsRouteAdmin.GET("/cars/chart-data", carController.GetCarChartData)
+	cmsRouteAdmin.GET("/cars/sales-data", carController.GetCarChartData)
 	cmsRouteAdmin.PUT("/cars/:id", carController.Update)
 	cmsRouteAdmin.DELETE("/cars/:id", carController.Delete)
 

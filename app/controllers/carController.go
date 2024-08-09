@@ -39,6 +39,12 @@ type WeeklyResult struct {
 	Second int    `json:"second"`
 }
 
+type CarSalesDataResponse struct {
+	Weekly  []WeeklyResult `json:"weekly"`
+	Monthly []Result       `json:"monthly"`
+	Yearly  []Result       `json:"yearly"`
+}
+
 // Create godoc
 // @Summary Create a new car
 // @Description Create a new car
@@ -216,15 +222,17 @@ func (cc *CarController) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Car deleted successfully"})
 }
 
-// GetCarChartData handles requests for car sales data by week, month, and year
+// GetCarChartData godoc
 // @Summary Get car sales data
-// @Description Get the number of cars sold per week, month, and per year
-// @Tags Cars
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} gin.H{"weekly": []WeeklyResult, "monthly": []Result, "yearly": []Result}
-// @Failure 500 {object} gin.H{"error": "Failed to get cars data"}
-// @Router /cars/sales-data [get]
+// @Description Get the number of cars sold per week, month, and per year. Accessible only by admin users.
+// @Tags cars
+// @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
+// @Success 200 {object} CarSalesDataResponse
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/cms/cars/sales-data [get]
 func (cc *CarController) GetCarChartData(c *gin.Context) {
 	// Fetch sold cars data
 	var cars []models.Car
@@ -238,7 +246,6 @@ func (cc *CarController) GetCarChartData(c *gin.Context) {
 	monthlySales := make(map[string]int)
 	yearlySales := make(map[string]int)
 
-	// Get the current time and calculate the time 7 days ago
 	now := time.Now()
 	weekAgo := now.AddDate(0, 0, -7)
 
@@ -266,8 +273,8 @@ func (cc *CarController) GetCarChartData(c *gin.Context) {
 
 	// Prepare results
 	var weeklyResults []WeeklyResult
-	for _, result := range weeklySales {
-		weeklyResults = append(weeklyResults, result)
+	for date, result := range weeklySales {
+		weeklyResults = append(weeklyResults, WeeklyResult{Date: date, New: result.New, Second: result.Second})
 	}
 
 	var monthlyResults, yearlyResults []Result
@@ -290,5 +297,9 @@ func (cc *CarController) GetCarChartData(c *gin.Context) {
 	})
 
 	// Respond with the data
-	c.JSON(http.StatusOK, gin.H{"weekly": weeklyResults, "monthly": monthlyResults, "yearly": yearlyResults})
+	c.JSON(http.StatusOK, CarSalesDataResponse{
+		Weekly:  weeklyResults,
+		Monthly: monthlyResults,
+		Yearly:  yearlyResults,
+	})
 }
