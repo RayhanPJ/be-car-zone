@@ -69,11 +69,11 @@ func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 // @Tags invoices
 // @Produce json
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Param id path string true "Invoice ID"
+// @Param id path string true "User ID"
 // @Success 200 {object} models.Invoice
 // @Router /api/cms/invoices/{id} [get]
 func (ctrl *InvoiceController) FindByID(c *gin.Context) {
-	var invoice models.Invoice
+	var invoice []models.Invoice
 	if err := ctrl.DB.Where("user_id = ?", c.Param("id")).Find(&invoice).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
