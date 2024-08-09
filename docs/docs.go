@@ -834,7 +834,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Invoice ID",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1021,7 +1021,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Order ID",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1358,7 +1358,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Transaction ID",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -2027,6 +2027,9 @@ const docTemplate = `{
                 "image_car": {
                     "type": "string"
                 },
+                "image_url": {
+                    "type": "string"
+                },
                 "is_second": {
                     "type": "boolean"
                 },
@@ -2077,6 +2080,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "image_car": {
+                    "type": "string"
+                },
+                "image_url": {
                     "type": "string"
                 },
                 "is_second": {

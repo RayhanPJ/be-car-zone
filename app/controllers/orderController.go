@@ -64,11 +64,11 @@ func (ctrl *OrderController) FindAll(c *gin.Context) {
 // @Tags orders
 // @Produce json
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Param id path string true "Order ID"
+// @Param id path string true "User ID"
 // @Success 200 {object} models.Order
 // @Router /api/cms/orders/{id} [get]
 func (ctrl *OrderController) FindByID(c *gin.Context) {
-	var order models.Order
+	var order []models.Order
 	if err := ctrl.DB.Where("user_id = ?", c.Param("id")).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
