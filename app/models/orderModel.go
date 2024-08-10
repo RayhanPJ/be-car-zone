@@ -13,8 +13,8 @@ type Order struct {
 	OrderImage string    `json:"order_image"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
-	User       User      `json:"-" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Car        Car       `json:"-" gorm:"foreignKey:CarID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	User       User      `json:"user" gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Car        Car       `json:"car" gorm:"foreignKey:CarID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
 type OrderDetail struct {
