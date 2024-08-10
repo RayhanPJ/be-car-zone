@@ -27,6 +27,7 @@ type OrderDetail struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 	Car        CarDetail `json:"car"`
+	User       UserList  `json:"user"`
 }
 
 type CarDetail struct {

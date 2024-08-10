@@ -24,7 +24,7 @@ type OrderController struct {
 // @Router /api/cms/orders [get]
 func (ctrl *OrderController) FindAll(c *gin.Context) {
 	var orders []models.Order
-	if err := ctrl.DB.Preload("Car").Order("created_at DESC").Find(&orders).Error; err != nil {
+	if err := ctrl.DB.Preload("Car").Preload("User").Order("created_at DESC").Find(&orders).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -52,6 +52,14 @@ func (ctrl *OrderController) FindAll(c *gin.Context) {
 				CreatedAt:   order.Car.CreatedAt,
 				UpdatedAt:   order.Car.UpdatedAt,
 			},
+			User: models.UserList{
+				ID:          order.User.ID,
+				Username:    order.User.Username,
+				PhoneNumber: order.User.PhoneNumber,
+				Address:     order.User.Address,
+				Email:       order.User.Email,
+				RoleName:    order.User.Role.RoleName, // Fetching RoleName from the Role association
+			},
 		})
 	}
 
@@ -69,7 +77,7 @@ func (ctrl *OrderController) FindAll(c *gin.Context) {
 // @Router /api/cms/orders/{id} [get]
 func (ctrl *OrderController) FindByID(c *gin.Context) {
 	var order []models.Order
-	if err := ctrl.DB.Where("user_id = ?", c.Param("id")).Find(&order).Error; err != nil {
+	if err := ctrl.DB.Preload("Car").Preload("User").Where("user_id = ?", c.Param("id")).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
 	}
