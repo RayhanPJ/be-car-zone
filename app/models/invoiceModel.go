@@ -11,8 +11,8 @@ type Invoice struct {
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 
-	Order       Order       `json:"-" gorm:"foreignKey:OrderID"`
-	Transaction Transaction `json:"-" gorm:"foreignKey:TransactionID"`
+	Order       Order       `json:"order" gorm:"foreignKey:OrderID"`
+	Transaction Transaction `json:"transaction" gorm:"foreignKey:TransactionID"`
 }
 
 type InvoiceDetail struct {
