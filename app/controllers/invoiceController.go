@@ -32,7 +32,7 @@ func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 	var invoiceDetails []models.InvoiceDetail
 	for _, invoice := range invoices {
 		// Filter untuk hanya memproses invoices dengan status true
-		if invoice.Order.Status == true {
+		if invoice.Order.Status {
 			invoiceDetails = append(invoiceDetails, models.InvoiceDetail{
 				ID:            invoice.ID,
 				OrderID:       invoice.OrderID,
