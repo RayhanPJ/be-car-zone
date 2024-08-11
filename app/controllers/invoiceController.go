@@ -24,44 +24,48 @@ type InvoiceController struct {
 // @Router /api/cms/invoices [get]
 func (ctrl *InvoiceController) FindAll(c *gin.Context) {
 	var invoices []models.Invoice
-	if err := ctrl.DB.Preload("Car").Order("created_at DESC").Find(&invoices).Error; err != nil {
+	if err := ctrl.DB.Preload("Order").Preload("Transaction").Order("created_at DESC").Find(&invoices).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
 
 	var invoiceDetails []models.InvoiceDetail
 	for _, invoice := range invoices {
-		invoiceDetails = append(invoiceDetails, models.InvoiceDetail{
-			ID:            invoice.ID,
-			OrderID:       invoice.OrderID,
-			TransactionID: invoice.TransactionID,
-			CreatedAt:     invoice.CreatedAt,
-			UpdatedAt:     invoice.UpdatedAt,
-			Order: models.OrderDetail{
-				ID:         invoice.Order.ID,
-				UserID:     invoice.Order.UserID,
-				CarID:      invoice.Order.CarID,
-				TotalPrice: invoice.Order.TotalPrice,
-				Status:     invoice.Order.Status,
-				OrderImage:     invoice.Order.OrderImage,
-				CreatedAt:  invoice.Order.CreatedAt,
-				UpdatedAt:  invoice.Order.UpdatedAt,
-			},
-			Transaction: models.TransactionDetail{
-				ID:               invoice.Transaction.ID,
-				OrderID:          invoice.Transaction.OrderID,
-				PaymentProvider:  invoice.Transaction.PaymentProvider,
-				NoRek:            invoice.Transaction.NoRek,
-				Amount:           invoice.Transaction.Amount,
-				TransactionDate:  invoice.Transaction.TransactionDate,
-				CreatedAt:        invoice.Transaction.CreatedAt,
-				UpdatedAt:        invoice.Transaction.UpdatedAt,
-			},
-		})
+		// Filter untuk hanya memproses invoices dengan status true
+		if invoice.Order.Status {
+			invoiceDetails = append(invoiceDetails, models.InvoiceDetail{
+				ID:            invoice.ID,
+				OrderID:       invoice.OrderID,
+				TransactionID: invoice.TransactionID,
+				CreatedAt:     invoice.CreatedAt,
+				UpdatedAt:     invoice.UpdatedAt,
+				Order: models.OrderDetail{
+					ID:         invoice.Order.ID,
+					UserID:     invoice.Order.UserID,
+					CarID:      invoice.Order.CarID,
+					TotalPrice: invoice.Order.TotalPrice,
+					Status:     invoice.Order.Status,
+					OrderImage: invoice.Order.OrderImage,
+					CreatedAt:  invoice.Order.CreatedAt,
+					UpdatedAt:  invoice.Order.UpdatedAt,
+				},
+				Transaction: models.TransactionDetail{
+					ID:               invoice.Transaction.ID,
+					OrderID:          invoice.Transaction.OrderID,
+					PaymentProvider:  invoice.Transaction.PaymentProvider,
+					NoRek:            invoice.Transaction.NoRek,
+					Amount:           invoice.Transaction.Amount,
+					TransactionDate:  invoice.Transaction.TransactionDate,
+					CreatedAt:        invoice.Transaction.CreatedAt,
+					UpdatedAt:        invoice.Transaction.UpdatedAt,
+				},
+			})
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": invoiceDetails})
 }
+
 
 // FindByID godoc
 // @Summary Get invoice by id

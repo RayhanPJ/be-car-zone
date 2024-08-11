@@ -149,18 +149,18 @@ func (ctrl *OrderController) Update(c *gin.Context) {
 		return
 	}
 
-	var userId, _ = jwt.ExtractTokenID(c)
+	// var userId, _ = jwt.ExtractTokenID(c)
 
 	// Cari user berdasarkan userID
-	var user models.User
-	if err := ctrl.DB.Where("id = ?", userId).First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		}
-		return
-	}
+	// var user models.User
+	// if err := ctrl.DB.Where("id = ?", userId).First(&user).Error; err != nil {
+	// 	if err == gorm.ErrRecordNotFound {
+	// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+	// 	} else {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	}
+	// 	return
+	// }
 
 	var req models.Order
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -168,7 +168,7 @@ func (ctrl *OrderController) Update(c *gin.Context) {
 		return
 	}
 	// Update fields
-	order.UserID = userId
+	order.UserID = req.UserID
 	order.CarID = req.CarID
 	order.TotalPrice = req.TotalPrice
 	order.Status = req.Status

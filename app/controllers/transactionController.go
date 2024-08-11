@@ -23,7 +23,7 @@ type TransactionController struct {
 // @Router /api/cms/transactions [get]
 func (ctrl *TransactionController) FindAll(c *gin.Context) {
 	var transactions []models.Transaction
-	if err := ctrl.DB.Preload("Order.Car").Order("created_at DESC").Find(&transactions).Error; err != nil {
+	if err := ctrl.DB.Preload("Order.Car").Preload("Order.User").Order("created_at DESC").Find(&transactions).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -58,6 +58,14 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 					IsSecond:    transaction.Order.Car.IsSecond,
 					CreatedAt:   transaction.Order.Car.CreatedAt,
 					UpdatedAt:   transaction.Order.Car.UpdatedAt,
+				},
+				User: models.UserList{
+					ID:          transaction.Order.User.ID,
+					Username:    transaction.Order.User.Username,
+					PhoneNumber: transaction.Order.User.PhoneNumber,
+					Address:     transaction.Order.User.Address,
+					Email:       transaction.Order.User.Email,
+					RoleName:    transaction.Order.User.Role.RoleName, // Fetching RoleName from the Role association
 				},
 			},
 		})
