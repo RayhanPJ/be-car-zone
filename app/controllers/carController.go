@@ -15,7 +15,6 @@ type CarInput struct {
 	Description string  `json:"description"`
 	ImageCar    string  `json:"image_car"`
 	Price       float64 `json:"price" binding:"required"`
-	ImageUrl    string  `json:"image_url"`
 	TypeID      uint    `json:"type_id" binding:"required"`
 	BrandID     uint    `json:"brand_id" binding:"required"`
 	IsSecond    bool    `json:"is_second"`
@@ -50,7 +49,6 @@ func (cc *CarController) Create(c *gin.Context) {
 		Description: input.Description,
 		ImageCar:    input.ImageCar,
 		Price:       input.Price,
-		ImageUrl:    input.ImageUrl,
 		TypeID:      input.TypeID,
 		BrandID:     input.BrandID,
 		IsSecond:    input.IsSecond,
@@ -150,7 +148,7 @@ func (cc *CarController) Update(c *gin.Context) {
 	car.Name = input.Name
 	car.Description = input.Description
 	car.Price = input.Price
-	car.ImageUrl = input.ImageUrl
+	car.ImageCar = input.ImageCar
 	car.TypeID = input.TypeID
 	car.BrandID = input.BrandID
 	car.IsSecond = input.IsSecond
