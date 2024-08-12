@@ -31,27 +31,28 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 	var transactionDetails []models.TransactionDetail
 	for _, transaction := range transactions {
 		transactionDetails = append(transactionDetails, models.TransactionDetail{
-			ID:               transaction.ID,
-			OrderID:          transaction.OrderID,
-			PaymentProvider:  transaction.PaymentProvider,
-			NoRek:            transaction.NoRek,
-			Amount:           transaction.Amount,
-			TransactionDate:  transaction.TransactionDate,
-			CreatedAt:        transaction.CreatedAt,
-			UpdatedAt:        transaction.UpdatedAt,
+			ID:              transaction.ID,
+			OrderID:         transaction.OrderID,
+			PaymentProvider: transaction.PaymentProvider,
+			NoRek:           transaction.NoRek,
+			Amount:          transaction.Amount,
+			TransactionDate: transaction.TransactionDate,
+			CreatedAt:       transaction.CreatedAt,
+			UpdatedAt:       transaction.UpdatedAt,
 			Order: models.OrderDetail{
 				ID:         transaction.Order.ID,
 				UserID:     transaction.Order.UserID,
 				CarID:      transaction.Order.CarID,
 				TotalPrice: transaction.Order.TotalPrice,
 				Status:     transaction.Order.Status,
-				OrderImage:     transaction.Order.OrderImage,
+				OrderImage: transaction.Order.OrderImage,
 				CreatedAt:  transaction.Order.CreatedAt,
 				UpdatedAt:  transaction.Order.UpdatedAt,
 				Car: models.CarDetail{
 					ID:          transaction.Order.Car.ID,
 					Name:        transaction.Order.Car.Name,
 					Description: transaction.Order.Car.Description,
+					ImageCar:    transaction.Order.Car.ImageCar,
 					Price:       transaction.Order.Car.Price,
 					TypeID:      transaction.Order.Car.TypeID,
 					BrandID:     transaction.Order.Car.BrandID,
@@ -111,12 +112,12 @@ func (ctrl *TransactionController) Create(c *gin.Context) {
 	}
 
 	newTransaction := models.Transaction{
-		OrderID:          req.OrderID,
-		PaymentProvider:  req.PaymentProvider,
-		NoRek:            req.NoRek,
-		Amount:           req.Amount,
-		TransactionDate:  time.Now(),
-		CreatedAt:        time.Now(),
+		OrderID:         req.OrderID,
+		PaymentProvider: req.PaymentProvider,
+		NoRek:           req.NoRek,
+		Amount:          req.Amount,
+		TransactionDate: time.Now(),
+		CreatedAt:       time.Now(),
 	}
 
 	if err := ctrl.DB.Create(&newTransaction).Error; err != nil {
