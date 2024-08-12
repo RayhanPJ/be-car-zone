@@ -551,6 +551,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/cms/cars/sales-data": {
+            "get": {
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ],
+                "description": "Get the number of cars sold per week, month, and per year. Accessible only by admin users.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cars"
+                ],
+                "summary": "Get car sales data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CarSalesDataResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/cms/cars/{id}": {
             "get": {
                 "description": "Get details of a specific car including its type and brand",
@@ -1735,6 +1787,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/cms/user/profile/{id}": {
+            "put": {
+                "description": "Update profile user or admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update profile user or admin",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
         "/api/cms/users": {
             "get": {
                 "description": "Get all users",
@@ -1839,7 +1939,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update existing user",
+                "description": "Update existing user by id (only admin)",
                 "consumes": [
                     "application/json"
                 ],
@@ -1849,7 +1949,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Update existing user",
+                "summary": "Update existing user by id (only admin)",
                 "parameters": [
                     {
                         "type": "string",
@@ -1978,9 +2078,6 @@ const docTemplate = `{
                 "image_car": {
                     "type": "string"
                 },
-                "image_url": {
-                    "type": "string"
-                },
                 "is_second": {
                     "type": "boolean"
                 },
@@ -1990,7 +2087,58 @@ const docTemplate = `{
                 "price": {
                     "type": "number"
                 },
+                "sold": {
+                    "type": "boolean"
+                },
                 "type_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.CarSalesDataResponse": {
+            "type": "object",
+            "properties": {
+                "monthly": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.Result"
+                    }
+                },
+                "weekly": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.WeeklyResult"
+                    }
+                },
+                "yearly": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.Result"
+                    }
+                }
+            }
+        },
+        "controllers.Result": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "period": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.WeeklyResult": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "new": {
+                    "type": "integer"
+                },
+                "second": {
                     "type": "integer"
                 }
             }
@@ -2033,9 +2181,6 @@ const docTemplate = `{
                 "image_car": {
                     "type": "string"
                 },
-                "image_url": {
-                    "type": "string"
-                },
                 "is_second": {
                     "type": "boolean"
                 },
@@ -2044,6 +2189,9 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                },
+                "sold": {
+                    "type": "boolean"
                 },
                 "type": {
                     "$ref": "#/definitions/models.TypeCar"

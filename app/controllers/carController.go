@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"net/http"
+	"sort"
 	"strconv"
+	"time"
 
 	"be-car-zone/app/models"
 
@@ -18,10 +20,28 @@ type CarInput struct {
 	TypeID      uint    `json:"type_id" binding:"required"`
 	BrandID     uint    `json:"brand_id" binding:"required"`
 	IsSecond    bool    `json:"is_second"`
+	Sold        bool    `json:"sold"`
 }
 
 type CarController struct {
 	DB *gorm.DB
+}
+
+type Result struct {
+	Period string `json:"period"`
+	Count  int    `json:"count"`
+}
+
+type WeeklyResult struct {
+	Date   string `json:"date"`
+	New    int    `json:"new"`
+	Second int    `json:"second"`
+}
+
+type CarSalesDataResponse struct {
+	Weekly  []WeeklyResult `json:"weekly"`
+	Monthly []Result       `json:"monthly"`
+	Yearly  []Result       `json:"yearly"`
 }
 
 // Create godoc
@@ -52,6 +72,7 @@ func (cc *CarController) Create(c *gin.Context) {
 		TypeID:      input.TypeID,
 		BrandID:     input.BrandID,
 		IsSecond:    input.IsSecond,
+		Sold:        input.Sold,
 	}
 
 	if err := cc.DB.Create(&car).Error; err != nil {
@@ -146,12 +167,14 @@ func (cc *CarController) Update(c *gin.Context) {
 	}
 
 	car.Name = input.Name
+	car.ImageCar = input.ImageCar
 	car.Description = input.Description
 	car.Price = input.Price
-	car.ImageCar = input.ImageCar
+	car.ImageUrl = input.ImageUrl
 	car.TypeID = input.TypeID
 	car.BrandID = input.BrandID
 	car.IsSecond = input.IsSecond
+	car.Sold = input.Sold
 
 	if err := cc.DB.Save(&car).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update car"})
@@ -198,4 +221,86 @@ func (cc *CarController) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Car deleted successfully"})
+}
+
+// GetCarChartData godoc
+// @Summary Get car sales data
+// @Description Get the number of cars sold per week, month, and per year. Accessible only by admin users.
+// @Tags cars
+// @Produce json
+// @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
+// @Security BearerToken
+// @Success 200 {object} CarSalesDataResponse
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/cms/cars/sales-data [get]
+func (cc *CarController) GetCarChartData(c *gin.Context) {
+	// Fetch sold cars data
+	var cars []models.Car
+	if err := cc.DB.Where("sold = ?", true).Find(&cars).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get cars data"})
+		return
+	}
+
+	// Calculate weekly, monthly, and yearly sales
+	weeklySales := make(map[string]WeeklyResult)
+	monthlySales := make(map[string]int)
+	yearlySales := make(map[string]int)
+
+	now := time.Now()
+	weekAgo := now.AddDate(0, 0, -7)
+
+	for _, car := range cars {
+		createdDate := car.CreatedAt
+
+		// Check if the car was sold in the last week
+		if createdDate.After(weekAgo) && createdDate.Before(now) {
+			date := createdDate.Format("2006-01-02")
+			weeklyResult := weeklySales[date]
+			if car.IsSecond {
+				weeklyResult.Second++
+			} else {
+				weeklyResult.New++
+			}
+			weeklySales[date] = weeklyResult
+		}
+
+		// Calculate monthly and yearly sales
+		month := createdDate.Format("2006-01")
+		year := createdDate.Format("2006")
+		monthlySales[month]++
+		yearlySales[year]++
+	}
+
+	// Prepare results
+	var weeklyResults []WeeklyResult
+	for date, result := range weeklySales {
+		weeklyResults = append(weeklyResults, WeeklyResult{Date: date, New: result.New, Second: result.Second})
+	}
+
+	var monthlyResults, yearlyResults []Result
+	for month, count := range monthlySales {
+		monthlyResults = append(monthlyResults, Result{Period: month, Count: count})
+	}
+	for year, count := range yearlySales {
+		yearlyResults = append(yearlyResults, Result{Period: year, Count: count})
+	}
+
+	// Sort results
+	sort.Slice(weeklyResults, func(i, j int) bool {
+		return weeklyResults[i].Date < weeklyResults[j].Date
+	})
+	sort.Slice(monthlyResults, func(i, j int) bool {
+		return monthlyResults[i].Period < monthlyResults[j].Period
+	})
+	sort.Slice(yearlyResults, func(i, j int) bool {
+		return yearlyResults[i].Period < yearlyResults[j].Period
+	})
+
+	// Respond with the data
+	c.JSON(http.StatusOK, CarSalesDataResponse{
+		Weekly:  weeklyResults,
+		Monthly: monthlyResults,
+		Yearly:  yearlyResults,
+	})
 }

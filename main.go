@@ -2,8 +2,6 @@ package main
 
 import (
 	"be-car-zone/api"
-	// "be-car-zone/app/pkg/utils"
-	// "log"
 	"net/http"
 )
 

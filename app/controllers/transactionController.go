@@ -81,12 +81,12 @@ func (ctrl *TransactionController) FindAll(c *gin.Context) {
 // @Tags transactions
 // @Produce json
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Param id path string true "User ID"
+// @Param id path string true "Order ID"
 // @Success 200 {object} models.Transaction
 // @Router /api/cms/transactions/{id} [get]
 func (ctrl *TransactionController) FindByID(c *gin.Context) {
 	var transaction []models.Transaction
-	if err := ctrl.DB.Where("user_id = ?", c.Param("id")).Find(&transaction).Error; err != nil {
+	if err := ctrl.DB.Where("order_id = ?", c.Param("id")).Find(&transaction).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "record not found"})
 		return
 	}
